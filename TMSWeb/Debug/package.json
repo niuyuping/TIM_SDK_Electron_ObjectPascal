@@ -1,0 +1,17 @@
+{
+  "name": "TryTIMSDK",
+  "productName": "TryTIMSDK",
+  "version": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build-mac32": "electron-packager . --platform=darwin --arch=ia32 --asar --overwrite=true --electron-version= --icon=ElectronMac.icns",
+    "build-mac64": "electron-packager . --platform=darwin --arch=x64 --asar --overwrite=true --electron-version= --icon=ElectronMac.icns",
+    "build-win32": "electron-packager . --platform=win32 --arch=ia32 --asar --overwrite=true --electron-version= --icon=ElectronWindows.ico",
+    "build-win64": "electron-packager . --platform=win32 --arch=x64 --asar --overwrite=true --electron-version= --icon=ElectronWindows.ico",
+    "build-linux32": "electron-packager . --platform=linux --arch=ia32 --asar --overwrite=true --electron-version= --icon=ElectronLinux.png",
+    "build-linux64": "electron-packager . --platform=linux --arch=x64 --asar --overwrite=true --electron-version= --icon=ElectronLinux.png",
+    "run-win32": "cd \"TryTIMSDK-win32-ia32\" && \"TryTIMSDK.exe\"",
+    "run-win64": "cd \"TryTIMSDK-win32-x64\" && \"TryTIMSDK.exe\""
+  }
+}
