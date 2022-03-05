@@ -13,5 +13,9 @@
     "build-linux64": "electron-packager . --platform=linux --arch=x64 --asar --overwrite=true --electron-version= --icon=ElectronLinux.png",
     "run-win32": "cd \"TryTIMSDK-win32-ia32\" && \"TryTIMSDK.exe\"",
     "run-win64": "cd \"TryTIMSDK-win32-x64\" && \"TryTIMSDK.exe\""
+  },
+  "dependencies": {
+    "electron-store": "^8.0.1",
+    "im_electron_sdk": "^1.4.5"
   }
 }

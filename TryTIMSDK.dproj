@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Base>True</Base>
     <AppType>Application</AppType>
-    <Config Condition="'$(Config)'==''">Debug</Config>
+    <Config Condition="'$(Config)'==''">Build-MacOS64</Config>
     <FrameworkType>VCL</FrameworkType>
     <MainSource>TryTIMSDK.dpr</MainSource>
     <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -89,6 +89,12 @@
     <TMSWebDebugInfo>2</TMSWebDebugInfo>
     <TMSWebDefines>$(TMSWebDefines);DEBUG</TMSWebDefines>
     <TMSWebElectronBuild>1</TMSWebElectronBuild>
+    <TMSWebElectronMainJSFile>main.js</TMSWebElectronMainJSFile>
+    <TMSWebElectronPackageJSONFile>package.json</TMSWebElectronPackageJSONFile>
+    <TMSWebElectronResIconLinuxFile>ElectronLinux.png</TMSWebElectronResIconLinuxFile>
+    <TMSWebElectronResIconMacFile>ElectronMac.icns</TMSWebElectronResIconMacFile>
+    <TMSWebElectronResIconWindowsFile>ElectronWindows.ico</TMSWebElectronResIconWindowsFile>
+    <TMSWebHTMLFile>TryTIMSDK.html</TMSWebHTMLFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
     <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -100,30 +106,60 @@
     <TMSWebElectronBuild>2</TMSWebElectronBuild>
     <TMSWebObfuscation>2</TMSWebObfuscation>
     <TMSWebOptimization>2</TMSWebOptimization>
+    <TMSWebElectronMainJSFile>main.js</TMSWebElectronMainJSFile>
+    <TMSWebElectronPackageJSONFile>package.json</TMSWebElectronPackageJSONFile>
+    <TMSWebElectronResIconLinuxFile>ElectronLinux.png</TMSWebElectronResIconLinuxFile>
+    <TMSWebElectronResIconMacFile>ElectronMac.icns</TMSWebElectronResIconMacFile>
+    <TMSWebElectronResIconWindowsFile>ElectronWindows.ico</TMSWebElectronResIconWindowsFile>
+    <TMSWebHTMLFile>TryTIMSDK.html</TMSWebHTMLFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Cfg_3)'!=''">
     <TMSWebDefines>$(TMSWebDefines);RELEASE</TMSWebDefines>
     <TMSWebElectronBuild>3</TMSWebElectronBuild>
     <TMSWebObfuscation>2</TMSWebObfuscation>
     <TMSWebOptimization>2</TMSWebOptimization>
+    <TMSWebElectronMainJSFile>main.js</TMSWebElectronMainJSFile>
+    <TMSWebElectronPackageJSONFile>package.json</TMSWebElectronPackageJSONFile>
+    <TMSWebElectronResIconLinuxFile>ElectronLinux.png</TMSWebElectronResIconLinuxFile>
+    <TMSWebElectronResIconMacFile>ElectronMac.icns</TMSWebElectronResIconMacFile>
+    <TMSWebElectronResIconWindowsFile>ElectronWindows.ico</TMSWebElectronResIconWindowsFile>
+    <TMSWebHTMLFile>TryTIMSDK.html</TMSWebHTMLFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Cfg_4)'!=''">
     <TMSWebDefines>$(TMSWebDefines);RELEASE</TMSWebDefines>
     <TMSWebElectronBuild>4</TMSWebElectronBuild>
     <TMSWebObfuscation>2</TMSWebObfuscation>
     <TMSWebOptimization>2</TMSWebOptimization>
+    <TMSWebElectronMainJSFile>main.js</TMSWebElectronMainJSFile>
+    <TMSWebElectronPackageJSONFile>package.json</TMSWebElectronPackageJSONFile>
+    <TMSWebElectronResIconLinuxFile>ElectronLinux.png</TMSWebElectronResIconLinuxFile>
+    <TMSWebElectronResIconMacFile>ElectronMac.icns</TMSWebElectronResIconMacFile>
+    <TMSWebElectronResIconWindowsFile>ElectronWindows.ico</TMSWebElectronResIconWindowsFile>
+    <TMSWebHTMLFile>TryTIMSDK.html</TMSWebHTMLFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Cfg_5)'!=''">
     <TMSWebDefines>$(TMSWebDefines);RELEASE</TMSWebDefines>
     <TMSWebElectronBuild>5</TMSWebElectronBuild>
     <TMSWebObfuscation>2</TMSWebObfuscation>
     <TMSWebOptimization>2</TMSWebOptimization>
+    <TMSWebElectronMainJSFile>main.js</TMSWebElectronMainJSFile>
+    <TMSWebElectronPackageJSONFile>package.json</TMSWebElectronPackageJSONFile>
+    <TMSWebElectronResIconLinuxFile>ElectronLinux.png</TMSWebElectronResIconLinuxFile>
+    <TMSWebElectronResIconMacFile>ElectronMac.icns</TMSWebElectronResIconMacFile>
+    <TMSWebElectronResIconWindowsFile>ElectronWindows.ico</TMSWebElectronResIconWindowsFile>
+    <TMSWebHTMLFile>TryTIMSDK.html</TMSWebHTMLFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Cfg_6)'!=''">
     <TMSWebDefines>$(TMSWebDefines);RELEASE</TMSWebDefines>
     <TMSWebElectronBuild>7</TMSWebElectronBuild>
     <TMSWebObfuscation>2</TMSWebObfuscation>
     <TMSWebOptimization>2</TMSWebOptimization>
+    <TMSWebElectronMainJSFile>main.js</TMSWebElectronMainJSFile>
+    <TMSWebElectronPackageJSONFile>package.json</TMSWebElectronPackageJSONFile>
+    <TMSWebElectronResIconLinuxFile>ElectronLinux.png</TMSWebElectronResIconLinuxFile>
+    <TMSWebElectronResIconMacFile>ElectronMac.icns</TMSWebElectronResIconMacFile>
+    <TMSWebElectronResIconWindowsFile>ElectronWindows.ico</TMSWebElectronResIconWindowsFile>
+    <TMSWebHTMLFile>TryTIMSDK.html</TMSWebHTMLFile>
   </PropertyGroup>
   <ItemGroup>
     <DelphiCompile Include="$(MainSource)">
