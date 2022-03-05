@@ -1,3 +1,9 @@
+// TIM SDK for ObjectPascal 
+// Based on TMS Web Core Electron
+// Render JS Unit 
+// v1.0.0.0
+// Eric Niu From YingDan Tech 2022
+
 const timRender = require('im_electron_sdk/dist/renderer');
 
 //渲染进程的全局变量

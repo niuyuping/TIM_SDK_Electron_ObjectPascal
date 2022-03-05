@@ -6,8 +6,8 @@ uses
   Vcl.Forms,
   WEBLib.Forms,
   MainUnit in 'MainUnit.pas' {Form1: TElectronForm} {*.html},
-  IMRenderUnit in 'IMRenderUnit.pas',
-  IMRenderTypeUnit in 'IMRenderTypeUnit.pas';
+  IMRenderUnit in 'tim_lib\IMRenderUnit.pas',
+  IMRenderTypeUnit in 'tim_lib\IMRenderTypeUnit.pas';
 
 {$R *.res}
 

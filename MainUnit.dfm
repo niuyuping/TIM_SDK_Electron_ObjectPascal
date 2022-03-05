@@ -70,7 +70,7 @@ object Form1: TForm1
     Width = 100
   end
   object WebButton4: TWebButton
-    Caption = 'WebButton4'
+    Caption = 'Init'
     Color = clNone
     Default = False
     Font.Charset = ANSI_CHARSET

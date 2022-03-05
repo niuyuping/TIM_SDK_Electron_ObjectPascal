@@ -49035,8 +49035,8 @@ rtl.module("WEBLib.StdCtrls",["System","Classes","WEBLib.Controls","SysUtils","W
 rtl.module("IMRenderTypeUnit",["System"],function () {
   "use strict";
   var $mod = this;
-  this.$rtti.$MethodVar("TErrorEvent",{procsig: rtl.newTIProcSig([["AErrorCode",rtl.longint],["AErrorMessage",rtl.string]]), methodkind: 0});
   this.$rtti.$MethodVar("TNotifyEvent",{procsig: rtl.newTIProcSig([]), methodkind: 0});
+  this.$rtti.$MethodVar("TErrorEvent",{procsig: rtl.newTIProcSig([["AErrorCode",rtl.longint],["AErrorMessage",rtl.string]]), methodkind: 0});
   this.$rtti.$MethodVar("TOnGetSDKVersion",{procsig: rtl.newTIProcSig([["AVersion",rtl.string]]), methodkind: 0});
 });
 rtl.module("IMRenderUnit",["System","IMRenderTypeUnit"],function () {
@@ -49063,6 +49063,7 @@ rtl.module("IMRenderUnit",["System","IMRenderTypeUnit"],function () {
       };
       //JavaScript
       jsTIMInitRender();
+      
       timRenderInstance.TIMGetSDKVersion().then((result) => {
         jsOnGetSDKVersion(result.data)
       }).catch((err) => {
@@ -49191,7 +49192,7 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
         this.WebButton3.SetWidth(100);
         this.WebButton4.SetParentComponent(this);
         this.WebButton4.SetName("WebButton4");
-        this.WebButton4.SetCaption("WebButton4");
+        this.WebButton4.SetCaption("Init");
         this.WebButton4.SetColor(-1);
         this.WebButton4.SetDefault(false);
         this.WebButton4.FFont.FCharset = 0;
