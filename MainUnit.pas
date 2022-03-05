@@ -20,9 +20,9 @@ type
     procedure Form1Create(Sender: TObject);
   private
     { Private declarations }
+    TIMRender: TTIMRender;
   public
     { Public declarations }
-    TIMRender: TTIMRender;
     procedure OnGetSDKVersion(AVersion: String);
   end;
 
@@ -69,4 +69,4 @@ end;
 initialization
   RegisterClass(TForm1);
 
-end.  
+end.   
