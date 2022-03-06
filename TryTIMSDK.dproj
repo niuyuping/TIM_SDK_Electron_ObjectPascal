@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Base>True</Base>
     <AppType>Application</AppType>
-    <Config Condition="'$(Config)'==''">Build-MacOS64</Config>
+    <Config Condition="'$(Config)'==''">Debug</Config>
     <FrameworkType>VCL</FrameworkType>
     <MainSource>TryTIMSDK.dpr</MainSource>
     <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -160,6 +160,8 @@
     <TMSWebElectronResIconMacFile>ElectronMac.icns</TMSWebElectronResIconMacFile>
     <TMSWebElectronResIconWindowsFile>ElectronWindows.ico</TMSWebElectronResIconWindowsFile>
     <TMSWebHTMLFile>TryTIMSDK.html</TMSWebHTMLFile>
+    <TMSWebElectronVersion>17.1.0</TMSWebElectronVersion>
+    <TMSWebDebugInfo>2</TMSWebDebugInfo>
   </PropertyGroup>
   <ItemGroup>
     <DelphiCompile Include="$(MainSource)">

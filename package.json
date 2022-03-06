@@ -1,21 +1,25 @@
 {
-  "name": "$(ProjectName)",
-  "productName": "$(ProjectName)",
-  "version": "$(Version)",
-  "main": "$(MainJS)",
+  "name": "TryTIMSDK",
+  "productName": "TryTIMSDK",
+  "version": "",
+  "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build-mac32": "electron-packager . --platform=darwin --arch=ia32 --asar --overwrite=true --electron-version=$(ElectronVersion) --icon=$(IconFileMac)",
-    "build-mac64": "electron-packager . --platform=darwin --arch=x64 --asar --overwrite=true --electron-version=$(ElectronVersion) --icon=$(IconFileMac)",
-    "build-win32": "electron-packager . --platform=win32 --arch=ia32 --asar --overwrite=true --electron-version=$(ElectronVersion) --icon=$(IconFileWindows)",
-    "build-win64": "electron-packager . --platform=win32 --arch=x64 --asar --overwrite=true --electron-version=$(ElectronVersion) --icon=$(IconFileWindows)",
-    "build-linux32": "electron-packager . --platform=linux --arch=ia32 --asar --overwrite=true --electron-version=$(ElectronVersion) --icon=$(IconFileLinux)",
-    "build-linux64": "electron-packager . --platform=linux --arch=x64 --asar --overwrite=true --electron-version=$(ElectronVersion) --icon=$(IconFileLinux)",
-    "run-win32": "cd \"$(ProjectName)-win32-ia32\" && \"$(ProjectName).exe\"",
-    "run-win64": "cd \"$(ProjectName)-win32-x64\" && \"$(ProjectName).exe\""
+    "build-mac32": "electron-packager . --platform=darwin --arch=ia32 --asar --overwrite=true --electron-version= --icon=ElectronMac.icns",
+    "build-mac64": "electron-packager . --platform=darwin --arch=x64 --asar --overwrite=true --electron-version= --icon=ElectronMac.icns",
+    "build-win32": "electron-packager . --platform=win32 --arch=ia32 --asar --overwrite=true --electron-version= --icon=ElectronWindows.ico",
+    "build-win64": "electron-packager . --platform=win32 --arch=x64 --asar --overwrite=true --electron-version= --icon=ElectronWindows.ico",
+    "build-linux32": "electron-packager . --platform=linux --arch=ia32 --asar --overwrite=true --electron-version= --icon=ElectronLinux.png",
+    "build-linux64": "electron-packager . --platform=linux --arch=x64 --asar --overwrite=true --electron-version= --icon=ElectronLinux.png",
+    "run-win32": "cd \"TryTIMSDK-win32-ia32\" && \"TryTIMSDK.exe\"",
+    "run-win64": "cd \"TryTIMSDK-win32-x64\" && \"TryTIMSDK.exe\""
+  },
+  "author": {
+    "name": "Eric Niu",
+    "email": "niuyuping@ydcrm.cn"
   },
   "dependencies": {
-    "electron-store": "^8.0.1",
-    "im_electron_sdk": "^1.4.5"
+    "electron-store": "^8.0.0",
+    "im_electron_sdk": "^1.3.3"
   }
 }

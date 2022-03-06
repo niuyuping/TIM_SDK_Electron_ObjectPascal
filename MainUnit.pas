@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Electron, WEBLib.Dialogs, WEBLib.Menus, WEBLib.StdCtrls,
-  IMRenderUnit;
+  IMRendererUnit;
 
 type
   TForm1 = class(TElectronForm)
@@ -20,7 +20,7 @@ type
     procedure Form1Create(Sender: TObject);
   private
     { Private declarations }
-    TIMRender: TTIMRender;
+    TIMRenderer: TTIMRenderer;
   public
     { Public declarations }
     procedure OnGetSDKVersion(AVersion: String);
@@ -35,14 +35,14 @@ implementation
 
 procedure TForm1.Form1Create(Sender: TObject);
 begin
-  TIMRender:=TTIMRender.Create;
+  TIMRenderer:=TTIMRenderer.Create;
   
-  TIMRender.OnGetSDKVersion:=OnGetSDKVersion;  
+  TIMRenderer.OnGetSDKVersion:=OnGetSDKVersion;  
 end;
 
 procedure TForm1.WebButton1Click(Sender: TObject);
 begin
-  TIMRender.GetSDKVersion;  
+  TIMRenderer.GetSDKVersion;  
 end;
 
 procedure TForm1.WebButton4Click(Sender: TObject);
@@ -62,7 +62,7 @@ end;
 
 procedure TForm1.OnGetSDKVersion(AVersion: String);
 begin
-  console.log('Get SDK version: ', AVersion);
+  ShowMessage('Get SDK version: '+AVersion);
 end;
 
 

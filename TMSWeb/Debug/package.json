@@ -14,8 +14,12 @@
     "run-win32": "cd \"TryTIMSDK-win32-ia32\" && \"TryTIMSDK.exe\"",
     "run-win64": "cd \"TryTIMSDK-win32-x64\" && \"TryTIMSDK.exe\""
   },
+  "author": {
+    "name": "Eric Niu",
+    "email": "niuyuping@ydcrm.cn"
+  },
   "dependencies": {
-    "electron-store": "^8.0.1",
-    "im_electron_sdk": "^1.4.5"
+    "electron-store": "^8.0.0",
+    "im_electron_sdk": "^1.3.3"
   }
 }

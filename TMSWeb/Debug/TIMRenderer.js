@@ -4,24 +4,24 @@
 // v1.0.0.0
 // Eric Niu From YingDan Tech 2022
 
-const timRender = require('im_electron_sdk/dist/renderer');
+const timRenderer = require('im_electron_sdk/dist/renderer');
 
 //渲染进程的全局变量
-let timRenderInstance;
+let timRendererInstance;
 
 //如果渲染进程没有创建，就创建它
-const jsTIMInitRender = () => {
-  if (typeof timRenderInstance == 'undefined') {
-    timRenderInstance = new timRender();
-    timRenderInstance.TIMInit();
+const jsTIMInitRenderer = () => {
+  if (typeof timRendererInstance == 'undefined') {
+    timRendererInstance = new timRenderer();
+    timRendererInstance.TIMInit();
     console.log("Init TIM SDK...OK")
   }
 }
 
 //取TIM服务器时间
 function jsTIMGetServerTime() {
-  jsTIMInitRender();
-  timRenderInstance.TIMGetServerTime().then((result) => {
+  jsTIMInitRenderer();
+  timRendererInstance.TIMGetServerTime().then((result) => {
     console.log("Get TIM server time...OK", result.data)
   }).catch((err) => {
     console.log("Get TIM server time faild\n", err)
@@ -30,8 +30,8 @@ function jsTIMGetServerTime() {
 
 //反初始化
 const jsTIMUninit = () => {
-  jsTIMInitRender();
-  timRenderInstance.TIMUninit().then((result) => {
+  jsTIMInitRenderer();
+  timRendererInstance.TIMUninit().then((result) => {
     console.log("Uninit TIM SDK...OK", result.data)
   }).catch((err) => {
     console.log("Uninit TIM SDK faild\n", err)

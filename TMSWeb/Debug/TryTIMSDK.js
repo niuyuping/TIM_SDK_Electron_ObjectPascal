@@ -49032,17 +49032,17 @@ rtl.module("WEBLib.StdCtrls",["System","Classes","WEBLib.Controls","SysUtils","W
     return Result;
   };
 });
-rtl.module("IMRenderTypeUnit",["System"],function () {
+rtl.module("IMRendererTypeUnit",["System"],function () {
   "use strict";
   var $mod = this;
   this.$rtti.$MethodVar("TNotifyEvent",{procsig: rtl.newTIProcSig([]), methodkind: 0});
   this.$rtti.$MethodVar("TErrorEvent",{procsig: rtl.newTIProcSig([["AErrorCode",rtl.longint],["AErrorMessage",rtl.string]]), methodkind: 0});
   this.$rtti.$MethodVar("TOnGetSDKVersion",{procsig: rtl.newTIProcSig([["AVersion",rtl.string]]), methodkind: 0});
 });
-rtl.module("IMRenderUnit",["System","IMRenderTypeUnit"],function () {
+rtl.module("IMRendererUnit",["System","IMRendererTypeUnit"],function () {
   "use strict";
   var $mod = this;
-  rtl.createClass(this,"TTIMRender",pas.System.TObject,function () {
+  rtl.createClass(this,"TTIMRenderer",pas.System.TObject,function () {
     this.$init = function () {
       pas.System.TObject.$init.call(this);
       this.FOnGetSDKVersion = null;
@@ -49053,26 +49053,31 @@ rtl.module("IMRenderUnit",["System","IMRenderTypeUnit"],function () {
       this.FOnGetSDKVersionError = undefined;
       pas.System.TObject.$final.call(this);
     };
+    this.jsOnGetSDKVersion = function (AVersion) {
+      if (this.FOnGetSDKVersion != null) this.FOnGetSDKVersion(AVersion);
+    };
+    this.jsOnGetSDKVersion_Error = function (AErrorCode, AErrorMessage) {
+      if (this.FOnGetSDKVersionError != null) this.FOnGetSDKVersionError(AErrorCode,AErrorMessage);
+    };
     this.GetSDKVersion = function () {
-      var $Self = this;
-      function jsOnGetSDKVersion(AVersion) {
-        if ($Self.FOnGetSDKVersion != null) $Self.FOnGetSDKVersion(AVersion);
-      };
-      function jsOnGetSDKVersion_Error(AErrorCode, AErrorMessage) {
-        if ($Self.FOnGetSDKVersionError != null) $Self.FOnGetSDKVersionError(AErrorCode,AErrorMessage);
-      };
+      var tmpOnSucc = null;
+      var tmpOnError = null;
+      tmpOnSucc = rtl.createCallback(this,"jsOnGetSDKVersion");
+      tmpOnError = rtl.createCallback(this,"jsOnGetSDKVersion_Error");
       //JavaScript
-      jsTIMInitRender();
+      jsTIMInitRenderer();
       
-      timRenderInstance.TIMGetSDKVersion().then((result) => {
-        jsOnGetSDKVersion(result.data)
+      timRendererInstance.TIMGetSDKVersion().then((result) => {
+        console.log('SDK Version: ', result.data)
+        tmpOnSucc(result.data)
       }).catch((err) => {
-        jsOnGetSDKVersion_Error(-1, 'Get SDK version error.')
+        console.log(err);
+        tmpOnError(-1, 'Get SDK version error.')
       });
     };
   });
 });
-rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Electron","WEBLib.Dialogs","WEBLib.Menus","WEBLib.StdCtrls","IMRenderUnit"],function () {
+rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Electron","WEBLib.Dialogs","WEBLib.Menus","WEBLib.StdCtrls","IMRendererUnit"],function () {
   "use strict";
   var $mod = this;
   rtl.createClass(this,"TForm1",pas["WEBLib.Electron"].TElectronForm,function () {
@@ -49082,14 +49087,14 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
       this.WebButton2 = null;
       this.WebButton3 = null;
       this.WebButton4 = null;
-      this.TIMRender = null;
+      this.TIMRenderer = null;
     };
     this.$final = function () {
       this.WebButton1 = undefined;
       this.WebButton2 = undefined;
       this.WebButton3 = undefined;
       this.WebButton4 = undefined;
-      this.TIMRender = undefined;
+      this.TIMRenderer = undefined;
       pas["WEBLib.Electron"].TElectronForm.$final.call(this);
     };
     this.WebButton2Click = function (Sender) {
@@ -49099,14 +49104,14 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
     this.WebButton4Click = function (Sender) {
     };
     this.WebButton1Click = function (Sender) {
-      this.TIMRender.GetSDKVersion();
+      this.TIMRenderer.GetSDKVersion();
     };
     this.Form1Create = function (Sender) {
-      this.TIMRender = pas.IMRenderUnit.TTIMRender.$create("Create");
-      this.TIMRender.FOnGetSDKVersion = rtl.createCallback(this,"OnGetSDKVersion");
+      this.TIMRenderer = pas.IMRendererUnit.TTIMRenderer.$create("Create");
+      this.TIMRenderer.FOnGetSDKVersion = rtl.createCallback(this,"OnGetSDKVersion");
     };
     this.OnGetSDKVersion = function (AVersion) {
-      window.console.log("Get SDK version: ",AVersion);
+      pas["WEBLib.Dialogs"].ShowMessage("Get SDK version: " + AVersion);
     };
     this.LoadDFMValues = function () {
       pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
@@ -49232,7 +49237,7 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
     pas.Classes.RegisterClass($mod.TForm1);
   };
 });
-rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","MainUnit","IMRenderUnit","IMRenderTypeUnit"],function () {
+rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","MainUnit","IMRendererUnit","IMRendererTypeUnit"],function () {
   "use strict";
   var $mod = this;
   $mod.$implcode = function () {
