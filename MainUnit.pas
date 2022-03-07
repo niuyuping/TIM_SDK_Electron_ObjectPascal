@@ -8,11 +8,12 @@ uses
   IMRendererUnit;
 
 type
-  TForm1 = class(TElectronForm)
+  TMainForm = class(TElectronForm)
     WebButton1: TWebButton;
     WebButton2: TWebButton;
     WebButton3: TWebButton;
     WebButton4: TWebButton;
+    DebugMemo: TWebMemo;
     procedure WebButton2Click(Sender: TObject);
     procedure WebButton3Click(Sender: TObject);
     procedure WebButton4Click(Sender: TObject);
@@ -23,50 +24,70 @@ type
     TIMRenderer: TTIMRenderer;
   public
     { Public declarations }
-    procedure OnGetSDKVersion(AVersion: String);
+    procedure OnTIMRendererGetSDKVersion(AVersion: String);
+    procedure OnTIMRendererGetServerTimer(AServerTime: NativeUInt);
+    procedure OnTIMRendererInit;
+    procedure OnTIMRendererUninit;
   end;
 
 var
-  Form1: TForm1;
+  MainForm: TMainForm;
 
 implementation
 
 {$R *.dfm}
 
-procedure TForm1.Form1Create(Sender: TObject);
+procedure TMainForm.Form1Create(Sender: TObject);
 begin
   TIMRenderer:=TTIMRenderer.Create;
   
-  TIMRenderer.OnGetSDKVersion:=OnGetSDKVersion;  
+  TIMRenderer.OnGetSDKVersion:=OnTIMRendererGetSDKVersion;  
+  TIMRenderer.OnGetServerTimer:=OnTIMRendererGetServerTimer;
+  TIMRenderer.OnInit:=OnTIMRendererInit;
+  TIMRenderer.OnUninit:=OnTIMRendererUninit;
 end;
 
-procedure TForm1.WebButton1Click(Sender: TObject);
+procedure TMainForm.WebButton1Click(Sender: TObject);
 begin
   TIMRenderer.GetSDKVersion;  
 end;
 
-procedure TForm1.WebButton4Click(Sender: TObject);
+procedure TMainForm.WebButton4Click(Sender: TObject);
 begin
-//  TIMInit;  
+  TIMRenderer.Init;  
 end;
 
-procedure TForm1.WebButton3Click(Sender: TObject);
+procedure TMainForm.WebButton3Click(Sender: TObject);
 begin
-  // TIMUninit;
+  TIMRenderer.Uninit;  
 end;
 
-procedure TForm1.WebButton2Click(Sender: TObject);
+procedure TMainForm.WebButton2Click(Sender: TObject);
 begin
-  // TIMGetServerTime;
+  TIMRenderer.GetServerTime;
 end;
 
-procedure TForm1.OnGetSDKVersion(AVersion: String);
+procedure TMainForm.OnTIMRendererGetSDKVersion(AVersion: String);
 begin
-  ShowMessage('Get SDK version: '+AVersion);
+  DebugMemo.Lines.Add(Format('TIM renderer get SDK version: %s', [AVersion]));
 end;
 
+procedure TMainForm.OnTIMRendererGetServerTimer(AServerTime: NativeUInt);
+begin
+  DebugMemo.Lines.Add(Format('TIM renderer get server time: %d', [AServerTime]));
+end;
+
+procedure TMainForm.OnTIMRendererInit;
+begin
+  DebugMemo.Lines.Add('TIM renderer init');  
+end;
+
+procedure TMainForm.OnTIMRendererUninit;
+begin
+  DebugMemo.Lines.Add('TIM renderer uninit');  
+end;
 
 initialization
-  RegisterClass(TForm1);
+  RegisterClass(TMainForm);
 
-end.   
+end.      

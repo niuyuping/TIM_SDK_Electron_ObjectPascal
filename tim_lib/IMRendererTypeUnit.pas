@@ -18,6 +18,21 @@ type
   //取SDK版本号出错的事件
   TOnGetSDKVersion_Error = TErrorEvent;
 
+  //成功取得服务器时间的事件
+  TOnGetServerTime = procedure (AServerTime: NativeUInt) of object;
+  //取服务器时间出错的事件
+  TOnGetServerTime_Error = TErrorEvent;
+
+  //成功初始化事件
+  TOnInit = TNotifyEvent;
+  //初始化失败事件
+  TOnInit_Error = TErrorEvent;
+
+  //反成功初始化事件
+  TOnUninit = TNotifyEvent;
+  //反初始化失败事件
+  TOnUninit_Error = TErrorEvent;
+  
 implementation
 
 end.

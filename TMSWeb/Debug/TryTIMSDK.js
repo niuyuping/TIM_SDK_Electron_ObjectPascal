@@ -49038,6 +49038,7 @@ rtl.module("IMRendererTypeUnit",["System"],function () {
   this.$rtti.$MethodVar("TNotifyEvent",{procsig: rtl.newTIProcSig([]), methodkind: 0});
   this.$rtti.$MethodVar("TErrorEvent",{procsig: rtl.newTIProcSig([["AErrorCode",rtl.longint],["AErrorMessage",rtl.string]]), methodkind: 0});
   this.$rtti.$MethodVar("TOnGetSDKVersion",{procsig: rtl.newTIProcSig([["AVersion",rtl.string]]), methodkind: 0});
+  this.$rtti.$MethodVar("TOnGetServerTime",{procsig: rtl.newTIProcSig([["AServerTime",rtl.nativeuint]]), methodkind: 0});
 });
 rtl.module("IMRendererUnit",["System","IMRendererTypeUnit"],function () {
   "use strict";
@@ -49047,32 +49048,102 @@ rtl.module("IMRendererUnit",["System","IMRendererTypeUnit"],function () {
       pas.System.TObject.$init.call(this);
       this.FOnGetSDKVersion = null;
       this.FOnGetSDKVersionError = null;
+      this.FOnGetServerTimer = null;
+      this.FOnGetServerTimeError = null;
+      this.FOnInit = null;
+      this.FOnInitError = null;
+      this.FOnUninit = null;
+      this.FOnUninitError = null;
     };
     this.$final = function () {
       this.FOnGetSDKVersion = undefined;
       this.FOnGetSDKVersionError = undefined;
+      this.FOnGetServerTimer = undefined;
+      this.FOnGetServerTimeError = undefined;
+      this.FOnInit = undefined;
+      this.FOnInitError = undefined;
+      this.FOnUninit = undefined;
+      this.FOnUninitError = undefined;
       pas.System.TObject.$final.call(this);
     };
     this.jsOnGetSDKVersion = function (AVersion) {
       if (this.FOnGetSDKVersion != null) this.FOnGetSDKVersion(AVersion);
     };
-    this.jsOnGetSDKVersion_Error = function (AErrorCode, AErrorMessage) {
+    this.jsOnGetSDKVersionError = function (AErrorCode, AErrorMessage) {
       if (this.FOnGetSDKVersionError != null) this.FOnGetSDKVersionError(AErrorCode,AErrorMessage);
+    };
+    this.jsOnGetServerTime = function (AServerTime) {
+      if (this.FOnGetServerTimer != null) this.FOnGetServerTimer(AServerTime);
+    };
+    this.jsOnGetServerTimeError = function (AErrorCode, AErrorMessage) {
+      if (this.FOnGetServerTimeError != null) this.FOnGetServerTimeError(AErrorCode,AErrorMessage);
+    };
+    this.jsOnInit = function () {
+      if (this.FOnInit != null) this.FOnInit();
+    };
+    this.jsOnInitError = function (AErrorCode, AErrorMessage) {
+      if (this.FOnInitError != null) this.FOnInitError(AErrorCode,AErrorMessage);
+    };
+    this.jsOnUninit = function () {
+      if (this.FOnUninit != null) this.FOnUninit();
+    };
+    this.jsOnUninitError = function (AErrorCode, AErrorMessage) {
+      if (this.FOnUninitError != null) this.FOnUninitError(AErrorCode,AErrorMessage);
     };
     this.GetSDKVersion = function () {
       var tmpOnSucc = null;
       var tmpOnError = null;
       tmpOnSucc = rtl.createCallback(this,"jsOnGetSDKVersion");
-      tmpOnError = rtl.createCallback(this,"jsOnGetSDKVersion_Error");
+      tmpOnError = rtl.createCallback(this,"jsOnGetSDKVersionError");
+      this.Init();
       //JavaScript
-      jsTIMInitRenderer();
-      
       timRendererInstance.TIMGetSDKVersion().then((result) => {
-        console.log('SDK Version: ', result.data)
+        // console.log('SDK Version: ', result.data)
         tmpOnSucc(result.data)
       }).catch((err) => {
-        console.log(err);
-        tmpOnError(-1, 'Get SDK version error.')
+        // console.log(err);
+        tmpOnError(-1, err)
+      });
+    };
+    this.GetServerTime = function () {
+      var tmpOnSucc = null;
+      var tmpOnError = null;
+      tmpOnSucc = rtl.createCallback(this,"jsOnGetServerTime");
+      tmpOnError = rtl.createCallback(this,"jsOnGetServerTimeError");
+      this.Init();
+      //JavaScript
+      timRendererInstance.TIMGetServerTime().then((result) => {
+        tmpOnSucc(result.data)
+      }).catch((err) => {
+        tmpOnError(-1, err)
+      });
+    };
+    this.Init = function () {
+      var tmpOnSucc = null;
+      var tmpOnError = null;
+      tmpOnSucc = rtl.createCallback(this,"jsOnInit");
+      tmpOnError = rtl.createCallback(this,"jsOnInitError");
+      //JavaScript
+      if (typeof timRendererInstance == 'undefined') {
+        timRendererInstance = new timRenderer();
+        timRendererInstance.TIMInit().then((result) =>{
+          tmpOnSucc()
+        }).catch((err) => {
+           tmpOnError(result.data, err)
+        });
+      };
+    };
+    this.Uninit = function () {
+      var tmpOnSucc = null;
+      var tmpOnError = null;
+      tmpOnSucc = rtl.createCallback(this,"jsOnUninit");
+      tmpOnError = rtl.createCallback(this,"jsOnUninitError");
+      this.Init();
+      //JavaScript
+      timRendererInstance.TIMUninit().then((result) => {
+        tmpOnSucc()
+      }).catch((err) => {
+        tmpOnError(result.data, err)
       });
     };
   });
@@ -49080,7 +49151,7 @@ rtl.module("IMRendererUnit",["System","IMRendererTypeUnit"],function () {
 rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Electron","WEBLib.Dialogs","WEBLib.Menus","WEBLib.StdCtrls","IMRendererUnit"],function () {
   "use strict";
   var $mod = this;
-  rtl.createClass(this,"TForm1",pas["WEBLib.Electron"].TElectronForm,function () {
+  rtl.createClass(this,"TMainForm",pas["WEBLib.Electron"].TElectronForm,function () {
     this.$init = function () {
       pas["WEBLib.Electron"].TElectronForm.$init.call(this);
       this.WebButton1 = null;
@@ -49098,20 +49169,35 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
       pas["WEBLib.Electron"].TElectronForm.$final.call(this);
     };
     this.WebButton2Click = function (Sender) {
+      this.TIMRenderer.GetServerTime();
     };
     this.WebButton3Click = function (Sender) {
+      this.TIMRenderer.Uninit();
     };
     this.WebButton4Click = function (Sender) {
+      this.TIMRenderer.Init();
     };
     this.WebButton1Click = function (Sender) {
       this.TIMRenderer.GetSDKVersion();
     };
     this.Form1Create = function (Sender) {
       this.TIMRenderer = pas.IMRendererUnit.TTIMRenderer.$create("Create");
-      this.TIMRenderer.FOnGetSDKVersion = rtl.createCallback(this,"OnGetSDKVersion");
+      this.TIMRenderer.FOnGetSDKVersion = rtl.createCallback(this,"OnTIMRendererGetSDKVersion");
+      this.TIMRenderer.FOnGetServerTimer = rtl.createCallback(this,"OnTIMRendererGetServerTimer");
+      this.TIMRenderer.FOnInit = rtl.createCallback(this,"OnTIMRendererInit");
+      this.TIMRenderer.FOnUninit = rtl.createCallback(this,"OnTIMRendererUninit");
     };
-    this.OnGetSDKVersion = function (AVersion) {
-      pas["WEBLib.Dialogs"].ShowMessage("Get SDK version: " + AVersion);
+    this.OnTIMRendererGetSDKVersion = function (AVersion) {
+      window.console.log("TIM renderer get SDK version: ",AVersion);
+    };
+    this.OnTIMRendererGetServerTimer = function (AServerTime) {
+      window.console.log("TIM renderer get server time: ",AServerTime);
+    };
+    this.OnTIMRendererInit = function () {
+      window.console.log("TIM renderer init");
+    };
+    this.OnTIMRendererUninit = function () {
+      window.console.log("TIM renderer uninit");
     };
     this.LoadDFMValues = function () {
       pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
@@ -49124,7 +49210,7 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
       this.WebButton3.BeforeLoadDFMValues();
       this.WebButton4.BeforeLoadDFMValues();
       try {
-        this.SetName("Form1");
+        this.SetName("MainForm");
         this.SetBorder$1(pas["WEBLib.Electron"].TElectronFormBorderStyle.efbSizable);
         this.SetColor(16777215);
         this.FFont.FCharset = 0;
@@ -49157,7 +49243,7 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
         this.SetEvent$1(this.WebButton1,this,"OnClick","WebButton1Click");
         this.WebButton1.SetRole("button");
         this.WebButton1.SetTabOrder(0);
-        this.WebButton1.SetTop(6);
+        this.WebButton1.SetTop(94);
         this.WebButton1.SetWidth(100);
         this.WebButton2.SetParentComponent(this);
         this.WebButton2.SetName("WebButton2");
@@ -49175,7 +49261,7 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
         this.SetEvent$1(this.WebButton2,this,"OnClick","WebButton2Click");
         this.WebButton2.SetRole("button");
         this.WebButton2.SetTabOrder(0);
-        this.WebButton2.SetTop(46);
+        this.WebButton2.SetTop(134);
         this.WebButton2.SetWidth(100);
         this.WebButton3.SetParentComponent(this);
         this.WebButton3.SetName("WebButton3");
@@ -49193,7 +49279,7 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
         this.SetEvent$1(this.WebButton3,this,"OnClick","WebButton3Click");
         this.WebButton3.SetRole("button");
         this.WebButton3.SetTabOrder(0);
-        this.WebButton3.SetTop(84);
+        this.WebButton3.SetTop(52);
         this.WebButton3.SetWidth(100);
         this.WebButton4.SetParentComponent(this);
         this.WebButton4.SetName("WebButton4");
@@ -49211,7 +49297,7 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
         this.SetEvent$1(this.WebButton4,this,"OnClick","WebButton4Click");
         this.WebButton4.SetRole("button");
         this.WebButton4.SetTabOrder(0);
-        this.WebButton4.SetTop(123);
+        this.WebButton4.SetTop(11);
         this.WebButton4.SetWidth(100);
       } finally {
         this.WebButton1.AfterLoadDFMValues();
@@ -49232,9 +49318,9 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
     $r.addMethod("WebButton1Click",0,[["Sender",pas.System.$rtti["TObject"]]]);
     $r.addMethod("Form1Create",0,[["Sender",pas.System.$rtti["TObject"]]]);
   });
-  this.Form1 = null;
+  this.MainForm = null;
   $mod.$init = function () {
-    pas.Classes.RegisterClass($mod.TForm1);
+    pas.Classes.RegisterClass($mod.TMainForm);
   };
 });
 rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","MainUnit","IMRendererUnit","IMRendererTypeUnit"],function () {
@@ -49247,10 +49333,10 @@ rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","MainUnit","IMRende
     pas["WEBLib.Forms"].Application.Initialize();
     pas["WEBLib.Forms"].Application.FAutoFormRoute = true;
     pas["WEBLib.Forms"].Application.FMainFormOnTaskBar = true;
-    if (!pas["WEBLib.Forms"].Application.NeedsFormRouting()) pas["WEBLib.Forms"].Application.CreateForm(pas.MainUnit.TForm1,{p: pas.MainUnit, get: function () {
-        return this.p.Form1;
+    if (!pas["WEBLib.Forms"].Application.NeedsFormRouting()) pas["WEBLib.Forms"].Application.CreateForm(pas.MainUnit.TMainForm,{p: pas.MainUnit, get: function () {
+        return this.p.MainForm;
       }, set: function (v) {
-        this.p.Form1 = v;
+        this.p.MainForm = v;
       }});
     pas["WEBLib.Forms"].Application.Run();
   };

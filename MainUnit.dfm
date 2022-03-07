@@ -1,4 +1,4 @@
-object Form1: TForm1
+object MainForm: TMainForm
   Border = efbSizable
   Color = clWhite
   Font.Charset = ANSI_CHARSET
@@ -9,12 +9,12 @@ object Form1: TForm1
   Font.Style = []
   FormContainer = 'body'
   FormStyle = fsNormal
-  Height = 480
+  Height = 800
   Left = 0
   OnCreate = Form1Create
   TabOrder = 0
   Top = 0
-  Width = 640
+  Width = 1024
   object WebButton1: TWebButton
     Caption = 'GetSDKVersion'
     Color = clNone
@@ -30,7 +30,7 @@ object Form1: TForm1
     OnClick = WebButton1Click
     Role = 'button'
     TabOrder = 0
-    Top = 6
+    Top = 94
     Width = 100
   end
   object WebButton2: TWebButton
@@ -48,7 +48,7 @@ object Form1: TForm1
     OnClick = WebButton2Click
     Role = 'button'
     TabOrder = 0
-    Top = 46
+    Top = 134
     Width = 100
   end
   object WebButton3: TWebButton
@@ -66,7 +66,7 @@ object Form1: TForm1
     OnClick = WebButton3Click
     Role = 'button'
     TabOrder = 0
-    Top = 84
+    Top = 52
     Width = 100
   end
   object WebButton4: TWebButton
@@ -84,7 +84,25 @@ object Form1: TForm1
     OnClick = WebButton4Click
     Role = 'button'
     TabOrder = 0
-    Top = 123
+    Top = 11
     Width = 100
+  end
+  object DebugMemo: TWebMemo
+    Align = alRight
+    AutoSize = False
+    Color = clWindow
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Size = 8
+    Font.Style = []
+    Height = 800
+    Left = 784
+    ReadOnly = False
+    ShowFocus = True
+    TabOrder = 0
+    Top = 0
+    Width = 240
   end
 end
