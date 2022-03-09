@@ -7,7 +7,10 @@ uses
   WEBLib.Forms,
   MainUnit in 'MainUnit.pas' {MainForm: TElectronForm} {*.html},
   IMRendererUnit in 'tim_lib\IMRendererUnit.pas',
-  IMRendererTypeUnit in 'tim_lib\IMRendererTypeUnit.pas';
+  IMRendererTypeUnit in 'tim_lib\IMRendererTypeUnit.pas',
+  IMCloudDefUnit in 'tim_lib/IMCloudDefUnit.pas',
+  IMCloudCallbackUnit in 'tim_lib/IMCloudCallbackUnit.pas',
+  IMCloudDefUnit in 'tim_lib/IMCloudDefUnit.pas';
 
 {$R *.res}
 

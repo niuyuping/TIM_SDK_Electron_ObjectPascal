@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Electron, WEBLib.Dialogs, WEBLib.Menus, WEBLib.StdCtrls,
-  IMRendererUnit;
+  IMRendererUnit, IMCloudDefUnit;
 
 type
   TMainForm = class(TElectronForm)
@@ -28,6 +28,8 @@ type
     procedure OnTIMRendererGetServerTimer(AServerTime: NativeUInt);
     procedure OnTIMRendererInit;
     procedure OnTIMRendererUninit;
+    procedure OnNetworkStatus(AStatus: TIMNetworkStatus; ACode: NativeInt; ADesc: String; AUserData: JSValue);
+    procedure OnKickedOffline(AUserData: JSValue);
   end;
 
 var
@@ -37,6 +39,9 @@ implementation
 
 {$R *.dfm}
 
+uses
+  TypInfo;
+
 procedure TMainForm.Form1Create(Sender: TObject);
 begin
   TIMRenderer:=TTIMRenderer.Create;
@@ -45,6 +50,8 @@ begin
   TIMRenderer.OnGetServerTimer:=OnTIMRendererGetServerTimer;
   TIMRenderer.OnInit:=OnTIMRendererInit;
   TIMRenderer.OnUninit:=OnTIMRendererUninit;
+  TIMRenderer.NetworkStatusListenerCallback:=OnNetworkStatus;
+  TIMRenderer.KickedOfflineCallback:=OnKickedOffline;
 end;
 
 procedure TMainForm.WebButton1Click(Sender: TObject);
@@ -85,6 +92,16 @@ end;
 procedure TMainForm.OnTIMRendererUninit;
 begin
   DebugMemo.Lines.Add('TIM renderer uninit');  
+end;
+
+procedure TMainForm.OnNetworkStatus(AStatus: TIMNetworkStatus; ACode: NativeInt; ADesc: String; AUserData: JSValue);
+begin
+  DebugMemo.Lines.Add(GetEnumName(TypeInfo(TIMNetworkStatus), Ord(AStatus)));
+end;
+
+procedure TMainForm.OnKickedOffline(AUserData: JSValue);
+begin
+  DebugMemo.Lines.Add('Kicked offline');
 end;
 
 initialization

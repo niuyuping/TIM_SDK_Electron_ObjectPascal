@@ -1,5 +1,5 @@
 // TIM SDK for ObjectPascal 
-// Based on TMS Web Core Electron
+// Based on TMS Web Core Electron and TIM Electron SDK
 // Render Type Unit 
 // v1.0.0.0
 // Eric Niu From YingDan Tech 2022
@@ -7,6 +7,9 @@
 unit IMRendererTypeUnit;
 
 interface
+
+uses
+  IMCloudDefUnit, JS;
 
 type
   //标准通知事件
@@ -33,6 +36,11 @@ type
   //反初始化失败事件
   TOnUninit_Error = TErrorEvent;
   
+  //网络状态回调
+  TNetworkStatusListenerCallback = procedure (AStatus: TIMNetworkStatus; ACode: NativeInt; ADesc: String; AUserData: JSValue) of object;
+
+  //被踢下线的回调
+  TIMSetKickedOfflineCallback = procedure (AUserData: JSValue) of object;
 implementation
 
 end.

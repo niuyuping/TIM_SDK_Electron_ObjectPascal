@@ -1,5 +1,5 @@
 // TIM SDK for ObjectPascal 
-// Based on TMS Web Core Electron
+// Based on TMS Web Core Electron and TIM Electron SDK
 // Render Class Unit 
 // v1.0.0.0
 // Eric Niu From YingDan Tech 2022
@@ -17,24 +17,24 @@ type
   private
     FOnGetSDKVersion: TOnGetSDKVersion;
     FOnGetSDKVersionError: TOnGetSDKVersion_Error;
-    procedure jsOnGetSDKVersion(AVersion: String);
-    procedure jsOnGetSDKVersionError(AErrorCode: Integer; AErrorMessage: String);
 
     FOnGetServerTimer: TOnGetServerTime;
     FOnGetServerTimeError: TOnGetServerTime_Error;
-    procedure jsOnGetServerTime(AServerTime: NativeUInt);
-    procedure jsOnGetServerTimeError(AErrorCode: Integer; AErrorMessage: String);
 
     FOnInit: TOnInit;
     FOnInitError: TOnInit_Error;
-    procedure jsOnInit;
-    procedure jsOnInitError(AErrorCode: Integer; AErrorMessage: String);
 
     FOnUninit: TOnUninit;
     FOnUninitError: TOnUninit_Error;
-    procedure jsOnUninit;
-    procedure jsOnUninitError(AErrorCode: Integer; AErrorMessage: String);
+
+    procedure SetNetworkStatusListenerCallback(const AProc: TNetworkStatusListenerCallback);
+    function GetNetworkStatusListenerCallback: TNetworkStatusListenerCallback;
+    procedure SetKickedOfflineCallback(const Value: TKickedOfflineCallback);
+    function GetKickedOfflineCallback: TKickedOfflineCallback;
+  protected 
   public
+    constructor Create;
+  
     property OnGetSDKVersion: TOnGetSDKVersion read FOnGetSDKVersion write FOnGetSDKVersion;
     property OnGetSDKVersionError: TOnGetSDKVersion_Error read FOnGetSDKVersionError write FOnGetSDKVersionError;
 
@@ -58,6 +58,12 @@ type
 
     //反初始化
     procedure Uninit;
+
+    //设置网络状态回调
+    property NetworkStatusListenerCallback: TNetworkStatusListenerCallback read GetNetworkStatusListenerCallback write SetNetworkStatusListenerCallback;
+
+    //设置被踢下线通知回调
+    property KickedOfflineCallback: TKickedOfflineCallback read GetKickedOfflineCallback write SetKickedOfflineCallback;
   end;
 
 implementation
@@ -68,29 +74,28 @@ TIMGetSDKVersion
 ******************************************************
 }
 
-//Event for success
-procedure TTIMRenderer.jsOnGetSDKVersion(AVersion: String);
-begin
-  if Assigned(FOnGetSDKVersion) then
-    FOnGetSDKVersion(AVersion);
-end;
-
-//Event for error
-procedure TTIMRenderer.jsOnGetSDKVersionError(AErrorCode: Integer; AErrorMessage: String);
-begin
-  if Assigned(FOnGetSDKVersionError) then
-    FOnGetSDKVersionError(AErrorCode, AErrorMessage);
-end;
-
 procedure TTIMRenderer.GetSDKVersion;
+
+  //Event for success
+  procedure jsOnGetSDKVersion(AVersion: String);
+  begin
+    if Assigned(FOnGetSDKVersion) then
+      FOnGetSDKVersion(AVersion);
+  end;
+
+  //Event for error
+  procedure jsOnGetSDKVersionError(AErrorCode: Integer; AErrorMessage: String);
+  begin
+    if Assigned(FOnGetSDKVersionError) then
+      FOnGetSDKVersionError(AErrorCode, AErrorMessage);
+  end;
+
 var
   tmpOnSucc, tmpOnError: Pointer; 
 begin
   tmpOnSucc:=@jsOnGetSDKVersion;
   tmpOnError:=@jsOnGetSDKVersionError;
  
-  Init;
-
   asm //JavaScript
     timRendererInstance.TIMGetSDKVersion().then((result) => {
       // console.log('SDK Version: ', result.data)
@@ -109,14 +114,25 @@ TIMGetServerTime
 }
 
 procedure TTIMRenderer.GetServerTime;
+
+  procedure jsOnGetServerTimeError(AErrorCode: Integer; AErrorMessage: String);
+  begin
+    if Assigned(FOnGetServerTimeError) then
+      FOnGetServerTimeError(AErrorCode, AErrorMessage);  
+  end;
+
+  procedure jsOnGetServerTime(AServerTime: NativeUInt);
+  begin
+    if Assigned(FOnGetServerTimer) then
+      FOnGetServerTimer(AServerTime);  
+  end;
+
 var
   tmpOnSucc, tmpOnError: Pointer; 
 begin
   tmpOnSucc:=@jsOnGetServerTime;
   tmpOnError:=@jsOnGetServerTimeError;
   
-  Init;
-
   asm //JavaScript
     timRendererInstance.TIMGetServerTime().then((result) => {
       tmpOnSucc(result.data)
@@ -126,37 +142,26 @@ begin
   end;
 end;
 
-procedure TTIMRenderer.jsOnGetServerTimeError(AErrorCode: Integer; AErrorMessage: String);
-begin
-  if Assigned(FOnGetServerTimeError) then
-    FOnGetServerTimeError(AErrorCode, AErrorMessage);  
-end;
-
-procedure TTIMRenderer.jsOnGetServerTime(AServerTime: NativeUInt);
-begin
-  if Assigned(FOnGetServerTimer) then
-    FOnGetServerTimer(AServerTime);  
-end;
-
 {
 ******************************************************
 TIMInit
 ******************************************************
 }
 
-procedure TTIMRenderer.jsOnInit;
-begin
-  if Assigned(FOnInit) then
-    FOnInit;  
-end;
-
-procedure TTIMRenderer.jsOnInitError(AErrorCode: Integer; AErrorMessage: String);
-begin
-  if Assigned(FOnInitError) then
-    FOnInitError(AErrorCode, AErrorMessage);
-end;
-
 procedure TTIMRenderer.Init;
+
+  procedure jsOnInit;
+  begin
+    if Assigned(FOnInit) then
+      FOnInit;  
+  end;
+
+  procedure jsOnInitError(AErrorCode: Integer; AErrorMessage: String);
+  begin
+    if Assigned(FOnInitError) then
+      FOnInitError(AErrorCode, AErrorMessage);
+  end;
+
 var
   tmpOnSucc, tmpOnError: Pointer; 
 begin
@@ -164,14 +169,11 @@ begin
   tmpOnError:=@jsOnInitError;
 
   asm //JavaScript
-    if (typeof timRendererInstance == 'undefined') {
-      timRendererInstance = new timRenderer();
-      timRendererInstance.TIMInit().then((result) =>{
-        tmpOnSucc()
-      }).catch((err) => {
-         tmpOnError(result.data, err)
-      });
-    }
+    timRendererInstance.TIMInit().then((result) =>{
+      tmpOnSucc()
+    }).catch((err) => {
+      tmpOnError(result.data, err)
+    });    
   end;
 end;
 
@@ -181,27 +183,26 @@ TIMInit
 ******************************************************
 }
 
-procedure TTIMRenderer.jsOnUninit;
-begin
-  if Assigned(FOnUninit) then
-    FOnUninit;    
-end;
-
-procedure TTIMRenderer.jsOnUninitError(AErrorCode: Integer; AErrorMessage: String);
-begin
-  if Assigned(FOnUninitError) then
-    FOnUninitError(AErrorCode, AErrorMessage);  
-end;
-
 procedure TTIMRenderer.Uninit;
+
+  procedure jsOnUninit;
+  begin
+    if Assigned(FOnUninit) then
+      FOnUninit;    
+  end;
+
+  procedure jsOnUninitError(AErrorCode: Integer; AErrorMessage: String);
+  begin
+    if Assigned(FOnUninitError) then
+      FOnUninitError(AErrorCode, AErrorMessage);  
+  end;
+
 var
   tmpOnSucc, tmpOnError: Pointer; 
 begin
   tmpOnSucc:=@jsOnUninit;
   tmpOnError:=@jsOnUninitError;
   
-  Init;
-
   asm //JavaScript
     timRendererInstance.TIMUninit().then((result) => {
       tmpOnSucc()
@@ -209,6 +210,66 @@ begin
       tmpOnError(result.data, err)
     });   
   end;
+end;
+
+{
+******************************************************
+SetNewworkStatusListenerCallback
+******************************************************
+}
+
+procedure TTIMRenderer.SetNetworkStatusListenerCallback(const AProc: TNetworkStatusListenerCallback);
+begin
+  asm //JavaScript
+    timRendererInstance.TIMSetNetworkStatusListenerCallback({
+      callback:(...args)=>{
+        AProc(args[0][0], args[0][1], args[0][2], args[0][3])
+      },
+    })
+  end;
+end;
+
+function TTIMRenderer.GetNetworkStatusListenerCallback: TNetworkStatusListenerCallback;
+begin
+  
+end;
+
+{
+******************************************************
+Class constructor
+******************************************************
+}
+
+constructor TTIMRenderer.Create;
+begin
+  inherited;
+  asm //JavaScript
+     if (typeof timRendererInstance == 'undefined') {
+      timRendererInstance = new timRenderer();
+     }   
+  end;
+end;
+
+{
+******************************************************
+SetKickedOfflineCallback
+******************************************************
+}
+
+procedure TTIMRenderer.SetKickedOfflineCallback(const Value: TKickedOfflineCallback);
+begin
+  asm //JavaScript
+    timRendererInstance.TIMSetKickedOfflineCallback({
+      callback:(...args)=>{
+        AProc(args[0][0])
+      },
+    }) 
+  end; 
+end;
+
+function TTIMRenderer.GetKickedOfflineCallback: TKickedOfflineCallback;
+begin
+  
 end;
 
 end.
