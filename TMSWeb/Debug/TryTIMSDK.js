@@ -49032,13 +49032,20 @@ rtl.module("WEBLib.StdCtrls",["System","Classes","WEBLib.Controls","SysUtils","W
     return Result;
   };
 });
-rtl.module("IMRendererTypeUnit",["System"],function () {
+rtl.module("IMCloudDefUnit",["System"],function () {
+  "use strict";
+  var $mod = this;
+  this.TIMNetworkStatus = {"0": "kTIMConnected", kTIMConnected: 0, "1": "kTIMDisconnected", kTIMDisconnected: 1, "2": "kTIMConnecting", kTIMConnecting: 2, "3": "kTIMConnectFailed", kTIMConnectFailed: 3};
+  this.$rtti.$Enum("TIMNetworkStatus",{minvalue: 0, maxvalue: 3, ordtype: 1, enumtype: this.TIMNetworkStatus});
+});
+rtl.module("IMRendererTypeUnit",["System","IMCloudDefUnit","JS"],function () {
   "use strict";
   var $mod = this;
   this.$rtti.$MethodVar("TNotifyEvent",{procsig: rtl.newTIProcSig([]), methodkind: 0});
   this.$rtti.$MethodVar("TErrorEvent",{procsig: rtl.newTIProcSig([["AErrorCode",rtl.longint],["AErrorMessage",rtl.string]]), methodkind: 0});
   this.$rtti.$MethodVar("TOnGetSDKVersion",{procsig: rtl.newTIProcSig([["AVersion",rtl.string]]), methodkind: 0});
   this.$rtti.$MethodVar("TOnGetServerTime",{procsig: rtl.newTIProcSig([["AServerTime",rtl.nativeuint]]), methodkind: 0});
+  this.$rtti.$MethodVar("TNetworkStatusListenerCallback",{procsig: rtl.newTIProcSig([["AStatus",pas.IMCloudDefUnit.$rtti["TIMNetworkStatus"]],["ACode",rtl.nativeint],["ADesc",rtl.string],["AUserData",rtl.jsvalue]]), methodkind: 0});
 });
 rtl.module("IMRendererUnit",["System","IMRendererTypeUnit"],function () {
   "use strict";
@@ -49066,36 +49073,38 @@ rtl.module("IMRendererUnit",["System","IMRendererTypeUnit"],function () {
       this.FOnUninitError = undefined;
       pas.System.TObject.$final.call(this);
     };
-    this.jsOnGetSDKVersion = function (AVersion) {
-      if (this.FOnGetSDKVersion != null) this.FOnGetSDKVersion(AVersion);
+    this.SetNetworkStatusListenerCallback = function (AProc) {
+      //JavaScript
+      timRendererInstance.TIMSetNetworkStatusListenerCallback({
+        callback:(...args)=>{
+          AProc(args[0][0], args[0][1], args[0][2], args[0][3])
+        },
+      });
     };
-    this.jsOnGetSDKVersionError = function (AErrorCode, AErrorMessage) {
-      if (this.FOnGetSDKVersionError != null) this.FOnGetSDKVersionError(AErrorCode,AErrorMessage);
+    this.GetNetworkStatusListenerCallback = function () {
+      var Result = null;
+      return Result;
     };
-    this.jsOnGetServerTime = function (AServerTime) {
-      if (this.FOnGetServerTimer != null) this.FOnGetServerTimer(AServerTime);
-    };
-    this.jsOnGetServerTimeError = function (AErrorCode, AErrorMessage) {
-      if (this.FOnGetServerTimeError != null) this.FOnGetServerTimeError(AErrorCode,AErrorMessage);
-    };
-    this.jsOnInit = function () {
-      if (this.FOnInit != null) this.FOnInit();
-    };
-    this.jsOnInitError = function (AErrorCode, AErrorMessage) {
-      if (this.FOnInitError != null) this.FOnInitError(AErrorCode,AErrorMessage);
-    };
-    this.jsOnUninit = function () {
-      if (this.FOnUninit != null) this.FOnUninit();
-    };
-    this.jsOnUninitError = function (AErrorCode, AErrorMessage) {
-      if (this.FOnUninitError != null) this.FOnUninitError(AErrorCode,AErrorMessage);
+    this.Create$1 = function () {
+      pas.System.TObject.Create.call(this);
+      //JavaScript
+      if (typeof timRendererInstance == 'undefined') {
+       timRendererInstance = new timRenderer();
+      };
+      return this;
     };
     this.GetSDKVersion = function () {
+      var $Self = this;
+      function jsOnGetSDKVersion(AVersion) {
+        if ($Self.FOnGetSDKVersion != null) $Self.FOnGetSDKVersion(AVersion);
+      };
+      function jsOnGetSDKVersionError(AErrorCode, AErrorMessage) {
+        if ($Self.FOnGetSDKVersionError != null) $Self.FOnGetSDKVersionError(AErrorCode,AErrorMessage);
+      };
       var tmpOnSucc = null;
       var tmpOnError = null;
-      tmpOnSucc = rtl.createCallback(this,"jsOnGetSDKVersion");
-      tmpOnError = rtl.createCallback(this,"jsOnGetSDKVersionError");
-      this.Init();
+      tmpOnSucc = jsOnGetSDKVersion;
+      tmpOnError = jsOnGetSDKVersionError;
       //JavaScript
       timRendererInstance.TIMGetSDKVersion().then((result) => {
         // console.log('SDK Version: ', result.data)
@@ -49106,11 +49115,17 @@ rtl.module("IMRendererUnit",["System","IMRendererTypeUnit"],function () {
       });
     };
     this.GetServerTime = function () {
+      var $Self = this;
+      function jsOnGetServerTimeError(AErrorCode, AErrorMessage) {
+        if ($Self.FOnGetServerTimeError != null) $Self.FOnGetServerTimeError(AErrorCode,AErrorMessage);
+      };
+      function jsOnGetServerTime(AServerTime) {
+        if ($Self.FOnGetServerTimer != null) $Self.FOnGetServerTimer(AServerTime);
+      };
       var tmpOnSucc = null;
       var tmpOnError = null;
-      tmpOnSucc = rtl.createCallback(this,"jsOnGetServerTime");
-      tmpOnError = rtl.createCallback(this,"jsOnGetServerTimeError");
-      this.Init();
+      tmpOnSucc = jsOnGetServerTime;
+      tmpOnError = jsOnGetServerTimeError;
       //JavaScript
       timRendererInstance.TIMGetServerTime().then((result) => {
         tmpOnSucc(result.data)
@@ -49119,26 +49134,36 @@ rtl.module("IMRendererUnit",["System","IMRendererTypeUnit"],function () {
       });
     };
     this.Init = function () {
+      var $Self = this;
+      function jsOnInit() {
+        if ($Self.FOnInit != null) $Self.FOnInit();
+      };
+      function jsOnInitError(AErrorCode, AErrorMessage) {
+        if ($Self.FOnInitError != null) $Self.FOnInitError(AErrorCode,AErrorMessage);
+      };
       var tmpOnSucc = null;
       var tmpOnError = null;
-      tmpOnSucc = rtl.createCallback(this,"jsOnInit");
-      tmpOnError = rtl.createCallback(this,"jsOnInitError");
+      tmpOnSucc = jsOnInit;
+      tmpOnError = jsOnInitError;
       //JavaScript
-      if (typeof timRendererInstance == 'undefined') {
-        timRendererInstance = new timRenderer();
-        timRendererInstance.TIMInit().then((result) =>{
-          tmpOnSucc()
-        }).catch((err) => {
-           tmpOnError(result.data, err)
-        });
-      };
+      timRendererInstance.TIMInit().then((result) =>{
+        tmpOnSucc()
+      }).catch((err) => {
+        tmpOnError(result.data, err)
+      });
     };
     this.Uninit = function () {
+      var $Self = this;
+      function jsOnUninit() {
+        if ($Self.FOnUninit != null) $Self.FOnUninit();
+      };
+      function jsOnUninitError(AErrorCode, AErrorMessage) {
+        if ($Self.FOnUninitError != null) $Self.FOnUninitError(AErrorCode,AErrorMessage);
+      };
       var tmpOnSucc = null;
       var tmpOnError = null;
-      tmpOnSucc = rtl.createCallback(this,"jsOnUninit");
-      tmpOnError = rtl.createCallback(this,"jsOnUninitError");
-      this.Init();
+      tmpOnSucc = jsOnUninit;
+      tmpOnError = jsOnUninitError;
       //JavaScript
       timRendererInstance.TIMUninit().then((result) => {
         tmpOnSucc()
@@ -49148,7 +49173,7 @@ rtl.module("IMRendererUnit",["System","IMRendererTypeUnit"],function () {
     };
   });
 });
-rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Electron","WEBLib.Dialogs","WEBLib.Menus","WEBLib.StdCtrls","IMRendererUnit"],function () {
+rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics","WEBLib.Controls","WEBLib.Forms","WEBLib.Electron","WEBLib.Dialogs","WEBLib.Menus","WEBLib.StdCtrls","IMRendererUnit","IMCloudDefUnit"],function () {
   "use strict";
   var $mod = this;
   rtl.createClass(this,"TMainForm",pas["WEBLib.Electron"].TElectronForm,function () {
@@ -49158,6 +49183,7 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
       this.WebButton2 = null;
       this.WebButton3 = null;
       this.WebButton4 = null;
+      this.DebugMemo = null;
       this.TIMRenderer = null;
     };
     this.$final = function () {
@@ -49165,6 +49191,7 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
       this.WebButton2 = undefined;
       this.WebButton3 = undefined;
       this.WebButton4 = undefined;
+      this.DebugMemo = undefined;
       this.TIMRenderer = undefined;
       pas["WEBLib.Electron"].TElectronForm.$final.call(this);
     };
@@ -49181,23 +49208,27 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
       this.TIMRenderer.GetSDKVersion();
     };
     this.Form1Create = function (Sender) {
-      this.TIMRenderer = pas.IMRendererUnit.TTIMRenderer.$create("Create");
+      this.TIMRenderer = pas.IMRendererUnit.TTIMRenderer.$create("Create$1");
       this.TIMRenderer.FOnGetSDKVersion = rtl.createCallback(this,"OnTIMRendererGetSDKVersion");
       this.TIMRenderer.FOnGetServerTimer = rtl.createCallback(this,"OnTIMRendererGetServerTimer");
       this.TIMRenderer.FOnInit = rtl.createCallback(this,"OnTIMRendererInit");
       this.TIMRenderer.FOnUninit = rtl.createCallback(this,"OnTIMRendererUninit");
+      this.TIMRenderer.SetNetworkStatusListenerCallback(rtl.createCallback(this,"OnNetworkStatus"));
     };
     this.OnTIMRendererGetSDKVersion = function (AVersion) {
-      window.console.log("TIM renderer get SDK version: ",AVersion);
+      this.DebugMemo.FLines.Add(pas.SysUtils.Format("TIM renderer get SDK version: %s",[AVersion]));
     };
     this.OnTIMRendererGetServerTimer = function (AServerTime) {
-      window.console.log("TIM renderer get server time: ",AServerTime);
+      this.DebugMemo.FLines.Add(pas.SysUtils.Format("TIM renderer get server time: %d",[AServerTime]));
     };
     this.OnTIMRendererInit = function () {
-      window.console.log("TIM renderer init");
+      this.DebugMemo.FLines.Add("TIM renderer init");
     };
     this.OnTIMRendererUninit = function () {
-      window.console.log("TIM renderer uninit");
+      this.DebugMemo.FLines.Add("TIM renderer uninit");
+    };
+    this.OnNetworkStatus = function (AStatus, ACode, ADesc, AUserData) {
+      this.DebugMemo.FLines.Add(pas.TypInfo.GetEnumName(pas.IMCloudDefUnit.$rtti["TIMNetworkStatus"],AStatus));
     };
     this.LoadDFMValues = function () {
       pas["WEBLib.Forms"].TCustomForm.LoadDFMValues.call(this);
@@ -49205,10 +49236,12 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
       this.WebButton2 = pas["WEBLib.StdCtrls"].TButton.$create("Create$1",[this]);
       this.WebButton3 = pas["WEBLib.StdCtrls"].TButton.$create("Create$1",[this]);
       this.WebButton4 = pas["WEBLib.StdCtrls"].TButton.$create("Create$1",[this]);
+      this.DebugMemo = pas["WEBLib.StdCtrls"].TMemo.$create("Create$1",[this]);
       this.WebButton1.BeforeLoadDFMValues();
       this.WebButton2.BeforeLoadDFMValues();
       this.WebButton3.BeforeLoadDFMValues();
       this.WebButton4.BeforeLoadDFMValues();
+      this.DebugMemo.BeforeLoadDFMValues();
       try {
         this.SetName("MainForm");
         this.SetBorder$1(pas["WEBLib.Electron"].TElectronFormBorderStyle.efbSizable);
@@ -49221,12 +49254,12 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
         this.FFont.SetStyle({});
         this.SetFormContainer("body");
         this.SetFormStyle(pas["WEBLib.Forms"].TFormStyle.fsNormal);
-        this.SetHeight(480);
+        this.SetHeight(800);
         this.SetLeft(0);
         this.SetEvent(this,"OnCreate","Form1Create");
         this.SetTabOrder(0);
         this.SetTop(0);
-        this.SetWidth(640);
+        this.SetWidth(1024);
         this.WebButton1.SetParentComponent(this);
         this.WebButton1.SetName("WebButton1");
         this.WebButton1.SetCaption("GetSDKVersion");
@@ -49299,11 +49332,30 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
         this.WebButton4.SetTabOrder(0);
         this.WebButton4.SetTop(11);
         this.WebButton4.SetWidth(100);
+        this.DebugMemo.SetParentComponent(this);
+        this.DebugMemo.SetName("DebugMemo");
+        this.DebugMemo.SetAlign(pas["WEBLib.Controls"].TAlign.alRight);
+        this.DebugMemo.SetAutoSize(false);
+        this.DebugMemo.SetColor(16711422);
+        this.DebugMemo.FFont.FCharset = 0;
+        this.DebugMemo.FFont.SetColor(0);
+        this.DebugMemo.FFont.SetHeight(-11);
+        this.DebugMemo.FFont.SetName("Arial");
+        this.DebugMemo.FFont.SetSize(8);
+        this.DebugMemo.FFont.SetStyle({});
+        this.DebugMemo.SetHeight(800);
+        this.DebugMemo.SetLeft(784);
+        this.DebugMemo.SetReadOnly(false);
+        this.DebugMemo.SetShowFocus(true);
+        this.DebugMemo.SetTabOrder(0);
+        this.DebugMemo.SetTop(0);
+        this.DebugMemo.SetWidth(240);
       } finally {
         this.WebButton1.AfterLoadDFMValues();
         this.WebButton2.AfterLoadDFMValues();
         this.WebButton3.AfterLoadDFMValues();
         this.WebButton4.AfterLoadDFMValues();
+        this.DebugMemo.AfterLoadDFMValues();
       };
     };
     rtl.addIntf(this,pas.System.IUnknown);
@@ -49312,6 +49364,7 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
     $r.addField("WebButton2",pas["WEBLib.StdCtrls"].$rtti["TButton"]);
     $r.addField("WebButton3",pas["WEBLib.StdCtrls"].$rtti["TButton"]);
     $r.addField("WebButton4",pas["WEBLib.StdCtrls"].$rtti["TButton"]);
+    $r.addField("DebugMemo",pas["WEBLib.StdCtrls"].$rtti["TMemo"]);
     $r.addMethod("WebButton2Click",0,[["Sender",pas.System.$rtti["TObject"]]]);
     $r.addMethod("WebButton3Click",0,[["Sender",pas.System.$rtti["TObject"]]]);
     $r.addMethod("WebButton4Click",0,[["Sender",pas.System.$rtti["TObject"]]]);
@@ -49322,8 +49375,12 @@ rtl.module("MainUnit",["System","SysUtils","Classes","JS","Web","WEBLib.Graphics
   $mod.$init = function () {
     pas.Classes.RegisterClass($mod.TMainForm);
   };
+},["TypInfo"]);
+rtl.module("IMCloudCallbackUnit",["System"],function () {
+  "use strict";
+  var $mod = this;
 });
-rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","MainUnit","IMRendererUnit","IMRendererTypeUnit"],function () {
+rtl.module("program",["System","WEBLib.Forms","WEBLib.Forms","MainUnit","IMRendererUnit","IMRendererTypeUnit","IMCloudDefUnit","IMCloudCallbackUnit"],function () {
   "use strict";
   var $mod = this;
   $mod.$implcode = function () {

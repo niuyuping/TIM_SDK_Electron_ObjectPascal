@@ -104,6 +104,7 @@ begin
   DebugMemo.Lines.Add('Kicked offline');
 end;
 
+
 initialization
   RegisterClass(TMainForm);
 

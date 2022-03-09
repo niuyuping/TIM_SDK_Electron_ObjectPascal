@@ -45,7 +45,7 @@ function createWindow () {
     mainWindow = new BrowserWindow({ width: 0, height: 0, show: false, webPreferences: { nodeIntegration: true, enableRemoteModule: true }, useContentSize: true})
   }
 
-  if ('Debug' === 'Release') {
+  if ('Release' === 'Release') {
     Menu.setApplicationMenu(null);
   }
 

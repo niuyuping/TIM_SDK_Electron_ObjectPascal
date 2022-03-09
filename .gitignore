@@ -28,3 +28,14 @@ __recovery/
 *.~*
 *.stat
 node_modules
+TMSWeb
+.DS_Store
+TMSWeb/Build-MacOS64/main.js
+TMSWeb/Build-MacOS64/TryTIMSDK.js
+TMSWeb/Debug/TryTIMSDK.js
+TMSWeb/.DS_Store
+TMSWeb/Build-MacOS64/.DS_Store
+TMSWeb/Build-MacOS64/main.js
+TMSWeb/Build-MacOS64/TryTIMSDK.js
+TMSWeb/Debug/TryTIMSDK.js
+.DS_Store
