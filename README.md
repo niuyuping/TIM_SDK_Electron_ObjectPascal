@@ -2,6 +2,8 @@
 
 这是腾讯即时通信（TIM）SDK的ObjectPascal版本，基于TMS Web Core框架，对使用TMS Web Core框架进行跨平台桌面开发的开发者提供支持。
 
+注意：此SDK仅支持TMS Web Core框架下的ObjectPascal与JavaScript混合开发，不能用于ObjectPascal或JavaScript的原生开发环境。
+
 1、此SDK基于腾讯官方SDK，需要在工程文件夹中通过npm i im_electron_sdk安装官方版本的Electron SDK。
 
 2、在TMS Web Core Electron项目的主JS文件main.js中增加以下初始化代码：
