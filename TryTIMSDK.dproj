@@ -181,6 +181,7 @@
     <DCCReference Include="yd_lib/YDRequestTypeUnit.pas"/>
     <DCCReference Include="yd_lib/YDSMSTypeUnit.pas"/>
     <DCCReference Include="yd_lib/YDLoginTypeUnit.pas"/>
+    <DCCReference Include="const/ConstUnit.pas"/>
     <None Include="TryTIMSDK.html"/>
     <None Include="package.json"/>
     <None Include="main.js"/>

@@ -13,7 +13,8 @@ uses
   YDRequestorUnit in 'yd_lib/YDRequestorUnit.pas',
   YDRequestTypeUnit in 'yd_lib/YDRequestTypeUnit.pas',
   YDSMSTypeUnit in 'yd_lib/YDSMSTypeUnit.pas',
-  YDLoginTypeUnit in 'yd_lib/YDLoginTypeUnit.pas';
+  YDLoginTypeUnit in 'yd_lib/YDLoginTypeUnit.pas',
+  ConstUnit in 'const/ConstUnit.pas';
 
 {$R *.res}
 

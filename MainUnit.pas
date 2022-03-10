@@ -80,7 +80,7 @@ implementation
 {$R *.dfm}
 
 uses
-  TypInfo, YDSMSTypeUnit, YDLoginTypeUnit;
+  TypInfo, YDSMSTypeUnit, YDLoginTypeUnit, ConstUnit;
 
 procedure TMainForm.LoginBtnClick(Sender: TObject);
 begin
@@ -141,7 +141,7 @@ begin
   TIMRenderer.OnGetUserProfileList:=OnTIMGetUserProfileList;
 
   YDRequestor:=TYDRequestor.Create(Self);
-  YDRequestor.BaseURL:='http://dev-gateway.yingdancrm.com';
+  YDRequestor.BaseURL:=YD_BASE_URL;
   YDRequestor.OnReqError:=OnYDReqError;
   YDRequestor.OnSMS:=OnYDSMS;
   YDRequestor.OnLogin:=OnYDLogin;
@@ -252,4 +252,4 @@ end;
 initialization
   RegisterClass(TMainForm);
 
-end.          
+end.           

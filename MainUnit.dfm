@@ -98,12 +98,12 @@ object MainForm: TMainForm
     Font.Size = 8
     Font.Style = []
     Height = 800
-    Left = 784
+    Left = 680
     ReadOnly = False
     ShowFocus = True
     TabOrder = 0
     Top = 0
-    Width = 240
+    Width = 344
   end
   object WebButton5: TWebButton
     Caption = 'GetLoginStatus'

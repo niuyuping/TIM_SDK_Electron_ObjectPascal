@@ -26,8 +26,6 @@ type
   end;
 
 const
-  REQ_SERVER_LOGIN = 'mobile-server';
-  REQ_URL_LOGIN = 'v1/auth/register_login';
 
 implementation
 

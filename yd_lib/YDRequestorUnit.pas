@@ -41,7 +41,7 @@ type
 implementation
 
 uses
-  System.SysUtils, TypInfo, YDLoginTypeUnit, YDSMSTypeUnit, WEBLib.JSON;
+  System.SysUtils, TypInfo, YDLoginTypeUnit, YDSMSTypeUnit, WEBLib.JSON, ConstUnit;
 
 constructor TYDRequestor.Create(AOwner: TComponent);
 begin
@@ -59,7 +59,7 @@ var
   TmpResponse: TYDCommonResponse;
 begin
   //拼接地址和参数
-  URL:=Format('%s/%s/%s?phoneNum=%s&smsType=%s', [FBaseURL, REQ_SERVER_SMS, REQ_URl_SMS, APhoneNumber, AKind]);
+  URL:=Format('%s/%s/%s?phoneNum=%s&smsType=%s', [FBaseURL, YD_MOBILE_SERVER, YD_REQ_SMS, APhoneNumber, AKind]);
   with Headers do
   begin
     Clear;
@@ -87,7 +87,7 @@ var
   TmpResponse: TYDCommonResponse;
 begin
   //拼接地址和参数
-  URL:=Format('%s/%s/%s?platform=Mac', [FBaseURL, REQ_SERVER_LOGIN, REQ_URl_LOGIN]);
+  URL:=Format('%s/%s/%s?platform=Mac', [FBaseURL, YD_MOBILE_SERVER, YD_REQ_LOGIN]);
   with Headers do
   begin
     Clear;

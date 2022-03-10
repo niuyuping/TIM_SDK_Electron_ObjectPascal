@@ -13,8 +13,6 @@ type
   TYDSMSResponse = TYDCommonResponse;
 
 const
-  REQ_SERVER_SMS = 'mobile-server';
-  REQ_URL_SMS = 'v1/sms/msg';
 
 implementation
 
