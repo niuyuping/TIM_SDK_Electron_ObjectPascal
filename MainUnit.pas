@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Electron, WEBLib.Dialogs, WEBLib.Menus, WEBLib.StdCtrls,
-  IMRendererUnit, IMCloudDefUnit, IMRendererTypeUnit;
+  IMRendererUnit, IMCloudDefUnit, IMRendererTypeUnit, YDRequestorUnit, YDRequestTypeUnit;
 
 type
   TMainForm = class(TElectronForm)
@@ -23,6 +23,11 @@ type
     WebButton7: TWebButton;
     WebButton8: TWebButton;
     WebButton9: TWebButton;
+    WebButton10: TWebButton;
+    SMSKindComboBox: TWebComboBox;
+    PhoneNumberEdit: TWebEdit;
+    LoginBtn: TWebButton;
+    CaptchaEdit: TWebEdit;
     procedure WebButton2Click(Sender: TObject);
     procedure WebButton3Click(Sender: TObject);
     procedure WebButton4Click(Sender: TObject);
@@ -33,11 +38,20 @@ type
     procedure WebButton7Click(Sender: TObject);
     procedure WebButton8Click(Sender: TObject);
     procedure WebButton9Click(Sender: TObject);
+    procedure WebButton10Click(Sender: TObject);
+    procedure CaptchaEditChange(Sender: TObject);
+    procedure LoginBtnClick(Sender: TObject);
   private
     { Private declarations }
+
+    //TIM渲染对象
     TIMRenderer: TTIMRenderer;
+    //盈单REST通讯对象
+    YDRequestor: TYDRequestor;
   public
     { Public declarations }
+
+    //TIM相关的事件
     procedure OnTIMRendererGetSDKVersion(AVersion: String);
     procedure OnTIMRendererGetServerTimer(AServerTime: NativeUInt);
     procedure OnTIMRendererInit(AResult: NativeInt);
@@ -47,10 +61,15 @@ type
     procedure OnTIMLog(ALevel: NativeInt; ALog: String; AUserData: JSValue);
     procedure OnTIMUserSigExpired(AUserData: JSValue);
     procedure OnTIMGetLoginStatus(ALoginStatus: NativeInt);
-    procedure OnTIMGetLoginUserID(AResult: TCommonResponse);
-    procedure OnTIMLogin(AResult: TCommonResponse);
-    procedure OnTIMLogout(AResult: TCommonResponse);
-    procedure OnTIMGetUserProfileList(AResult: TCommonResponse);
+    procedure OnTIMGetLoginUserID(AResult: TTIMCommonResponse);
+    procedure OnTIMLogin(AResult: TTIMCommonResponse);
+    procedure OnTIMLogout(AResult: TTIMCommonResponse);
+    procedure OnTIMGetUserProfileList(AResult: TTIMCommonResponse);
+
+    //盈单REST相关的事件
+    procedure OnYDReqError(AMessage: String; AUserData: JSValue);
+    procedure OnYDSMS(AResult: TYDCommonResponse; AUserData: JSValue);
+    procedure OnYDLogin(AResult: TYDCommonResponse; AUserData: JSValue);
   end;
 
 var
@@ -61,7 +80,22 @@ implementation
 {$R *.dfm}
 
 uses
-  TypInfo;
+  TypInfo, YDSMSTypeUnit, YDLoginTypeUnit;
+
+procedure TMainForm.LoginBtnClick(Sender: TObject);
+begin
+  YDRequestor.RequestLogin(GetEnumName(TypeInfo(TYDLoginType), 0), PhoneNumberEdit.Text, CaptchaEdit.Text);  
+end;
+
+procedure TMainForm.CaptchaEditChange(Sender: TObject);
+begin
+  LoginBtn.Enabled:=CaptchaEdit.Text<>''; 
+end;
+
+procedure TMainForm.WebButton10Click(Sender: TObject);
+begin
+  YDRequestor.RequestSMS(GetEnumName(TypeInfo(TYDSMSKind), SMSKindComboBox.ItemIndex), PhoneNumberEdit.Text);  
+end;
 
 procedure TMainForm.WebButton9Click(Sender: TObject);
 begin
@@ -105,6 +139,12 @@ begin
   TIMRenderer.OnLogin:=OnTIMLogin;
   TIMRenderer.OnLogout:=OnTIMLogout;
   TIMRenderer.OnGetUserProfileList:=OnTIMGetUserProfileList;
+
+  YDRequestor:=TYDRequestor.Create(Self);
+  YDRequestor.BaseURL:='http://dev-gateway.yingdancrm.com';
+  YDRequestor.OnReqError:=OnYDReqError;
+  YDRequestor.OnSMS:=OnYDSMS;
+  YDRequestor.OnLogin:=OnYDLogin;
 end;
 
 procedure TMainForm.WebButton1Click(Sender: TObject);
@@ -172,27 +212,44 @@ begin
   DebugMemo.Lines.Add(Format('Login status: %d', [ALoginStatus]));
 end;
 
-procedure TMainForm.OnTIMGetLoginUserID(AResult: TCommonResponse);
+procedure TMainForm.OnTIMGetLoginUserID(AResult: TTIMCommonResponse);
 begin
   DebugMemo.Lines.Add(Format('Login user ID: %d', [AResult.code]));
 end;
 
-procedure TMainForm.OnTIMLogin(AResult: TCommonResponse);
+procedure TMainForm.OnTIMLogin(AResult: TTIMCommonResponse);
 begin
   DebugMemo.Lines.Add(Format('Login: %d', [AResult.code]));
 end;
 
-procedure TMainForm.OnTIMLogout(AResult: TCommonResponse);
+procedure TMainForm.OnTIMLogout(AResult: TTIMCommonResponse);
 begin
   DebugMemo.Lines.Add(Format('Logout: %d', [AResult.code]));  
 end;
 
-procedure TMainForm.OnTIMGetUserProfileList(AResult: TCommonResponse);
+procedure TMainForm.OnTIMGetUserProfileList(AResult: TTIMCommonResponse);
 begin
   DebugMemo.Lines.Add(Format('Get user profile list: %d', [AResult.code]));    
+end;
+
+procedure TMainForm.OnYDReqError(AMessage: String; AUserData: JSValue);
+begin
+  DebugMemo.Lines.Add(Format('YD Request error: %s', [AMessage]));
+end;
+
+procedure TMainForm.OnYDSMS(AResult: TYDCommonResponse; AUserData: JSValue);
+begin
+  DebugMemo.Lines.Add(Format('YD request SMS: %d %s %s', [AResult.code, AResult.status, AResult.message]));
+end;
+
+procedure TMainForm.OnYDLogin(AResult: TYDCommonResponse; AUserData: JSValue);
+begin
+  DebugMemo.Lines.Add(Format('YD login: %d %s %s', [AResult.code, AResult.status, AResult.message]));
+  if AResult.code = 0 then
+    DebugMemo.Lines.Add(Format('userID: %d, userSig: %s, token: %s', [TYDLoginResponse(AResult.data).id, TYDLoginResponse(AResult.data).userSig, TYDLoginResponse(AResult.data).token]));
 end;
 
 initialization
   RegisterClass(TMainForm);
 
-end.      
+end.         
