@@ -354,7 +354,6 @@ object MainForm: TMainForm
     OnChange = CaptchaEditChange
     ShowFocus = True
     TabOrder = 0
-    Text = '5210'
     Top = 135
     Width = 100
   end

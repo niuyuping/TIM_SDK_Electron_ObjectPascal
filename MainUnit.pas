@@ -252,4 +252,4 @@ end;
 initialization
   RegisterClass(TMainForm);
 
-end.         
+end.          
