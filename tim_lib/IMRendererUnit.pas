@@ -15,98 +15,98 @@ type
   //TIM Render
   TTIMRenderer = class (TObject)
   private
-    FOnGetSDKVersion: TOnGetSDKVersion;
-    FOnGetSDKVersionError: TOnGetSDKVersion_Error;
+    FOnGetSDKVersion: TTIMOnGetSDKVersion;
+    FOnGetSDKVersionError: TTIMOnGetSDKVersion_Error;
 
-    FOnGetServerTimer: TOnGetServerTime;
-    FOnGetServerTimeError: TOnGetServerTime_Error;
+    FOnGetServerTimer: TTIMOnGetServerTime;
+    FOnGetServerTimeError: TTIMOnGetServerTime_Error;
 
-    FOnInit: TOnInit;
-    FOnInitError: TOnInit_Error;
+    FOnInit: TTIMOnInit;
+    FOnInitError: TTIMOnInit_Error;
 
-    FOnUninit: TOnUninit;
-    FOnUninitError: TOnUninit_Error;
+    FOnUninit: TTIMOnUninit;
+    FOnUninitError: TTIMOnUninit_Error;
 
-    FOnGetLoginStatus: TOnGetLoginStatus;
-    FOnGetLoginStatusError: TOnGetLoginStatus_Error;
+    FOnGetLoginStatus: TTIMOnGetLoginStatus;
+    FOnGetLoginStatusError: TTIMOnGetLoginStatus_Error;
 
-    FOnGetLoginUserID: TOnGetLoginUserID;
-    FOnGetLoginUserIDError: TOnGetLoginUserID_Error;
+    FOnGetLoginUserID: TTIMOnGetLoginUserID;
+    FOnGetLoginUserIDError: TTIMOnGetLoginUserID_Error;
 
-    FOnLogin: TOnLogin;
-    FOnLoginError: TOnLogin_Error;
+    FOnLogin: TTIMOnLogin;
+    FOnLoginError: TTIMOnLogin_Error;
 
-    FOnLogout: TOnLogout;
-    FOnLogoutError: TOnLogout_Error;
+    FOnLogout: TTIMOnLogout;
+    FOnLogoutError: TTIMOnLogout_Error;
 
-    FOnGetUserProfileList: TOnGetUserProfileList;
-    FOnGetUserProfileListError: TOnGetUserProfileList_Error;
+    FOnGetUserProfileList: TTIMOnGetUserProfileList;
+    FOnGetUserProfileListError: TTIMOnGetUserProfileList_Error;
   protected 
   public
     constructor Create;
   
-    property OnGetSDKVersion: TOnGetSDKVersion read FOnGetSDKVersion write FOnGetSDKVersion;
-    property OnGetSDKVersionError: TOnGetSDKVersion_Error read FOnGetSDKVersionError write FOnGetSDKVersionError;
+    property OnGetSDKVersion: TTIMOnGetSDKVersion read FOnGetSDKVersion write FOnGetSDKVersion;
+    property OnGetSDKVersionError: TTIMOnGetSDKVersion_Error read FOnGetSDKVersionError write FOnGetSDKVersionError;
 
     //取SDK版本号
     procedure GetSDKVersion;
 
-    property OnGetServerTimer: TOnGetServerTime read FOnGetServerTimer write FOnGetServerTimer;
-    property OnGetServerTimeError: TOnGetServerTime_Error read FOnGetServerTimeError write FOnGetServerTimeError;
+    property OnGetServerTimer: TTIMOnGetServerTime read FOnGetServerTimer write FOnGetServerTimer;
+    property OnGetServerTimeError: TTIMOnGetServerTime_Error read FOnGetServerTimeError write FOnGetServerTimeError;
  
     //取服务器时间
     procedure GetServerTime;
 
-    property OnInit: TOnInit read FOnInit write FOnInit;
-    property OnInitError: TOnInit_Error read FOnInitError write FOnInitError;
+    property OnInit: TTIMOnInit read FOnInit write FOnInit;
+    property OnInitError: TTIMOnInit_Error read FOnInitError write FOnInitError;
 
     //初始化
     procedure Init(AConfigPath: JSValue = Nil);
 
-    property OnUninitError: TOnUninit_Error read FOnUninitError write FOnUninitError;
-    property OnUninit: TOnUninit read FOnUninit write FOnUninit;
+    property OnUninitError: TTIMOnUninit_Error read FOnUninitError write FOnUninitError;
+    property OnUninit: TTIMOnUninit read FOnUninit write FOnUninit;
 
     //反初始化
     procedure Uninit;
 
     //设置网络状态回调
-    procedure SetNetworkStatusListenerCallback(AProc: TNetworkStatusListenerCallback; AUserData: JSValue = Nil);
+    procedure SetNetworkStatusListenerCallback(AProc: TTIMNetworkStatusListenerCallback; AUserData: JSValue = Nil);
 
     //设置被踢下线通知回调
-    procedure SetKickedOfflineCallback(AProc: TKickedOfflineCallback; AUserData: JSValue = Nil);
+    procedure SetKickedOfflineCallback(AProc: TTIMKickedOfflineCallback; AUserData: JSValue = Nil);
 
     //设置Log回调
-    procedure SetLogCallback(AProc: TLogCallback; AUserData: JSValue = Nil);
+    procedure SetLogCallback(AProc: TTIMLogCallback; AUserData: JSValue = Nil);
 
     //设置Sig过期的回调
-    procedure SetUserSigExpiredCallback(AProc: TUserSigExpiredCallback; AUserData: JSValue = Nil);
+    procedure SetUserSigExpiredCallback(AProc: TTIMUserSigExpiredCallback; AUserData: JSValue = Nil);
 
-    property OnGetLoginStatus: TOnGetLoginStatus read FOnGetLoginStatus write FOnGetLoginStatus;
-    property OnGetLoginStatusError: TOnGetLoginStatus_Error read FOnGetLoginStatusError write FOnGetLoginStatusError;
+    property OnGetLoginStatus: TTIMOnGetLoginStatus read FOnGetLoginStatus write FOnGetLoginStatus;
+    property OnGetLoginStatusError: TTIMOnGetLoginStatus_Error read FOnGetLoginStatusError write FOnGetLoginStatusError;
 
     //取登录状态
     procedure GetLoginStatus;
 
-    property OnGetLoginUserID: TOnGetLoginUserID read FOnGetLoginUserID write FOnGetLoginUserID;
-    property OnGetLoginUserIDError: TOnGetLoginUserID_Error read FOnGetLoginUserIDError write FOnGetLoginUserIDError;
+    property OnGetLoginUserID: TTIMOnGetLoginUserID read FOnGetLoginUserID write FOnGetLoginUserID;
+    property OnGetLoginUserIDError: TTIMOnGetLoginUserID_Error read FOnGetLoginUserIDError write FOnGetLoginUserIDError;
 
     //取已登录用户的ID
     procedure GetLoginUserID(AUserData: JSValue = Nil);
 
-    property OnLogin: TOnLogin read FOnLogin write FOnLogin;
-    property OnLoginError: TOnLogin_Error read FOnLoginError write FOnLoginError;
+    property OnLogin: TTIMOnLogin read FOnLogin write FOnLogin;
+    property OnLoginError: TTIMOnLogin_Error read FOnLoginError write FOnLoginError;
     
     //登录
     procedure Login(AUserID, AUserSig: String; AUserData: JSValue = Nil);
 
-    property OnLogout: TOnLogout read FOnLogout write FOnLogout;
-    property OnLogoutError: TOnLogout_Error read FOnLogoutError write FOnLogoutError;
+    property OnLogout: TTIMOnLogout read FOnLogout write FOnLogout;
+    property OnLogoutError: TTIMOnLogout_Error read FOnLogoutError write FOnLogoutError;
 
     //登出
     procedure Logout(AUserData: JSValue = Nil);
 
-    property OnGetUserProfileList: TOnGetUserProfileList read FOnGetUserProfileList write FOnGetUserProfileList;
-    property OnGetUserProfileListError: TOnGetUserProfileList_Error read FOnGetUserProfileListError write FOnGetUserProfileListError;
+    property OnGetUserProfileList: TTIMOnGetUserProfileList read FOnGetUserProfileList write FOnGetUserProfileList;
+    property OnGetUserProfileListError: TTIMOnGetUserProfileList_Error read FOnGetUserProfileListError write FOnGetUserProfileListError;
     
     //获取用户资料
     procedure GetUserProfileList(AUserIDList: array of string; AForceUpdate: Boolean; AUserData: JSValue = Nil);
@@ -265,7 +265,7 @@ SetNewworkStatusListenerCallback
 ******************************************************
 }
 
-procedure TTIMRenderer.SetNetworkStatusListenerCallback(AProc: TNetworkStatusListenerCallback; AUserData: JSValue = Nil);
+procedure TTIMRenderer.SetNetworkStatusListenerCallback(AProc: TTIMNetworkStatusListenerCallback; AUserData: JSValue = Nil);
 begin
   asm //JavaScript
     timRendererInstance.TIMSetNetworkStatusListenerCallback({
@@ -299,7 +299,7 @@ SetKickedOfflineCallback
 ******************************************************
 }
 
-procedure TTIMRenderer.SetKickedOfflineCallback(AProc: TKickedOfflineCallback; AUserData: JSValue = Nil);
+procedure TTIMRenderer.SetKickedOfflineCallback(AProc: TTIMKickedOfflineCallback; AUserData: JSValue = Nil);
 begin
   asm //JavaScript
     timRendererInstance.TIMSetKickedOfflineCallback({
@@ -317,7 +317,7 @@ SetLogCallback
 ******************************************************
 }
 
-procedure TTIMRenderer.SetLogCallback(AProc: TLogCallback; AUserData: JSValue = Nil);
+procedure TTIMRenderer.SetLogCallback(AProc: TTIMLogCallback; AUserData: JSValue = Nil);
 begin
   asm //JavaScript
     timRendererInstance.TIMSetLogCallback({
@@ -335,7 +335,7 @@ SetUserSigExpiredCallback
 ******************************************************
 }
 
-procedure TTIMRenderer.SetUserSigExpiredCallback(AProc: TUserSigExpiredCallback; AUserData: JSValue = Nil);
+procedure TTIMRenderer.SetUserSigExpiredCallback(AProc: TTIMUserSigExpiredCallback; AUserData: JSValue = Nil);
 begin
   asm //JavaScript
     timRendererInstance.TIMSetUserSigExpiredCallback({
@@ -390,7 +390,7 @@ GetLoginUserID
 
 procedure TTIMRenderer.GetLoginUserID(AUserData: JSValue = Nil);
 
-  procedure jsOnGetLoginUserID(AResult: TCommonResponse);
+  procedure jsOnGetLoginUserID(AResult: TTIMCommonResponse);
   begin
     if Assigned(FOnGetLoginUserID) then
       FOnGetLoginUserID(AResult);    
@@ -427,7 +427,7 @@ Login
 
 procedure TTIMRenderer.Login(AUserID, AUserSig: String; AUserData: JSValue = Nil);
 
-  procedure jsOnLogin(AResult: TCommonResponse);
+  procedure jsOnLogin(AResult: TTIMCommonResponse);
   begin
     if Assigned(FOnLogin) then
       FOnLogin(AResult);    
@@ -466,7 +466,7 @@ Logout
 
 procedure TTIMRenderer.Logout(AUserData: JSValue = Nil);
 
-  procedure jsOnLogout(AResult: TCommonResponse);
+  procedure jsOnLogout(AResult: TTIMCommonResponse);
   begin
     if Assigned(FOnLogout) then
       FOnLogout(AResult);    
@@ -503,7 +503,7 @@ GetUserProfileList
 
 procedure TTIMRenderer.GetUserProfileList(AUserIDList: array of string; AForceUpdate: Boolean; AUserData: JSValue = Nil);
 
-  procedure jsOnGetUserProfileList(AResult: TCommonResponse);
+  procedure jsOnGetUserProfileList(AResult: TTIMCommonResponse);
   begin
     if Assigned(FOnGetUserProfileList) then
       FOnGetUserProfileList(AResult);    

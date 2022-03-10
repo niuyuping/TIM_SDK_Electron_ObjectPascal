@@ -177,6 +177,10 @@
     <DCCReference Include="tim_lib/IMCloudDef.pas"/>
     <DCCReference Include="tim_lib/IMCloudCallbackUnit.pas"/>
     <DCCReference Include="tim_lib/IMCloudDefUnit.pas"/>
+    <DCCReference Include="yd_lib/YDRequestorUnit.pas"/>
+    <DCCReference Include="yd_lib/YDRequestTypeUnit.pas"/>
+    <DCCReference Include="yd_lib/YDSMSTypeUnit.pas"/>
+    <DCCReference Include="yd_lib/YDLoginTypeUnit.pas"/>
     <None Include="TryTIMSDK.html"/>
     <None Include="package.json"/>
     <None Include="main.js"/>

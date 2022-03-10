@@ -13,7 +13,7 @@ uses
 
 type
   //标准结构的返回数据
-  TCommonResponse = record
+  TTIMCommonResponse = record
     code: NativeInt;
     desc: JSValue;
     json_param: JSValue;
@@ -22,61 +22,61 @@ type
   end;
 
   //标准通知事件
-  TNotifyEvent = procedure of object;
-  TErrorEvent = procedure (AError: JSValue) of object;
-  TCommonEvent =  procedure (AResult: TCommonResponse) of object;
+  TTIMNotifyEvent = procedure of object;
+  TTIMErrorEvent = procedure (AError: JSValue) of object;
+  TTIMCommonEvent =  procedure (AResult: TTIMCommonResponse) of object;
 
   //成功取得SDK版本号的事件
-  TOnGetSDKVersion = procedure (AVersion: String) of object;
+  TTIMOnGetSDKVersion = procedure (AVersion: String) of object;
   //取SDK版本号出错的事件
-  TOnGetSDKVersion_Error = TErrorEvent;
+  TTIMOnGetSDKVersion_Error = TTIMErrorEvent;
 
   //成功取得服务器时间的事件
-  TOnGetServerTime = procedure (AServerTime: NativeUInt) of object;
+  TTIMOnGetServerTime = procedure (AServerTime: NativeUInt) of object;
   //取服务器时间出错的事件
-  TOnGetServerTime_Error = TErrorEvent;
+  TTIMOnGetServerTime_Error = TTIMErrorEvent;
 
   //成功初始化事件
-  TOnInit = procedure(AResult: NativeInt) of object;
+  TTIMOnInit = procedure(AResult: NativeInt) of object;
   //初始化失败事件
-  TOnInit_Error = TErrorEvent;
+  TTIMOnInit_Error = TTIMErrorEvent;
 
   //反成功初始化事件
-  TOnUninit = procedure(AResult: NativeInt) of object;
+  TTIMOnUninit = procedure(AResult: NativeInt) of object;
   //反初始化失败事件
-  TOnUninit_Error = TErrorEvent;
+  TTIMOnUninit_Error = TTIMErrorEvent;
   
   //网络状态回调
-  TNetworkStatusListenerCallback = procedure (AStatus: NativeInt; ACode: NativeInt; ADesc: String; AUserData: JSValue) of object;
+  TTIMNetworkStatusListenerCallback = procedure (AStatus: NativeInt; ACode: NativeInt; ADesc: String; AUserData: JSValue) of object;
 
   //被踢下线的回调
-  TKickedOfflineCallback = procedure (AUserData: JSValue) of object;
+  TTIMKickedOfflineCallback = procedure (AUserData: JSValue) of object;
 
   //Log回调
-  TLogCallback = procedure(ALevel: NativeInt; ALog: String; AUserData: JSValue) of object;
+  TTIMLogCallback = procedure(ALevel: NativeInt; ALog: String; AUserData: JSValue) of object;
 
   //Sig失效的回调
-  TUserSigExpiredCallback = procedure (AUserData: JSValue) of object;
+  TTIMUserSigExpiredCallback = procedure (AUserData: JSValue) of object;
 
   //取登录状态的事件
-  TOnGetLoginStatus = procedure (ALoginStatus: NativeInt) of object;
-  TOnGetLoginStatus_Error = TErrorEvent;
+  TTIMOnGetLoginStatus = procedure (ALoginStatus: NativeInt) of object;
+  TTIMOnGetLoginStatus_Error = TTIMErrorEvent;
   
   //取登录ID的事件
-  TOnGetLoginUserID = TCommonEvent;
-  TOnGetLoginUserID_Error = TErrorEvent;
+  TTIMOnGetLoginUserID = TTIMCommonEvent;
+  TTIMOnGetLoginUserID_Error = TTIMErrorEvent;
 
   //登录事件
-  TOnLogin = TCommonEvent;
-  TOnLogin_Error = TErrorEvent;
+  TTIMOnLogin = TTIMCommonEvent;
+  TTIMOnLogin_Error = TTIMErrorEvent;
 
   //登出事件
-  TOnLogout = TCommonEvent;
-  TOnLogout_Error = TErrorEvent;
+  TTIMOnLogout = TTIMCommonEvent;
+  TTIMOnLogout_Error = TTIMErrorEvent;
 
   //获取用户资料事件
-  TOnGetUserProfileList = TCommonEvent;
-  TOnGetUserProfileList_Error = TErrorEvent;
+  TTIMOnGetUserProfileList = TTIMCommonEvent;
+  TTIMOnGetUserProfileList_Error = TTIMErrorEvent;
 implementation
 
 end.

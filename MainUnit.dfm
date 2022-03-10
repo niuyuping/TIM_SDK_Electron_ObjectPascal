@@ -138,7 +138,7 @@ object MainForm: TMainForm
     OnClick = WebButton6Click
     Role = 'button'
     TabOrder = 0
-    Top = 206
+    Top = 214
     Width = 100
   end
   object WebLabel1: TWebLabel
@@ -199,6 +199,11 @@ object MainForm: TMainForm
     Left = 182
     ShowFocus = True
     TabOrder = 0
+    Text = 
+      'eJw9jlsKwjAURPeSb6k37W1MCn4INhVREHQDQlJ7jdbQh1bFvVta8XMeZ5g3O2z2' +
+      'ge08VZYlAlACTAbvbiuWsDAANurauKP3ZFjCEfqehEiOCRlbNpTTAHAUIlZcRUrG' +
+      'oFAK-h*gU5-vDGrDn7Lt0qx43aBcP9qw1ot0arJM6YvzUCxX4Vm77fwHNnTtv3GB' +
+      'QgHMED5f7PAyuA__'
     Top = 52
     Width = 248
   end
@@ -253,7 +258,104 @@ object MainForm: TMainForm
     OnClick = WebButton9Click
     Role = 'button'
     TabOrder = 0
-    Top = 238
+    Top = 254
+    Width = 100
+  end
+  object WebButton10: TWebButton
+    Caption = 'SMS'
+    Color = clNone
+    Default = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Size = 8
+    Font.Style = []
+    Height = 25
+    Left = 141
+    OnClick = WebButton10Click
+    Role = 'button'
+    TabOrder = 0
+    Top = 174
+    Width = 100
+  end
+  object SMSKindComboBox: TWebComboBox
+    Color = clWindow
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Size = 8
+    Font.Style = []
+    Height = 25
+    ItemIndex = 0
+    Items.Strings = (
+      'LOGIN'
+      'INVITATION'
+      'CHANGE_MOBILE'
+    )
+    Left = 141
+    Role = 'combobox'
+    ShowFocus = True
+    Style = csDropDownList
+    TabOrder = 0
+    Text = 'LOGIN'
+    Top = 134
+    Width = 100
+  end
+  object PhoneNumberEdit: TWebEdit
+    Alignment = taLeftJustify
+    Color = clWindow
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Size = 8
+    Font.Style = []
+    Height = 24
+    HideSelection = False
+    Left = 247
+    ShowFocus = True
+    TabOrder = 0
+    Text = '18611545555'
+    Top = 135
+    Width = 145
+  end
+  object LoginBtn: TWebButton
+    Caption = 'YD Login'
+    Color = clNone
+    Default = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Size = 8
+    Font.Style = []
+    Height = 25
+    Left = 247
+    OnClick = LoginBtnClick
+    Role = 'button'
+    TabOrder = 0
+    Top = 174
+    Width = 100
+  end
+  object CaptchaEdit: TWebEdit
+    Alignment = taLeftJustify
+    Color = clWindow
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Size = 8
+    Font.Style = []
+    Height = 25
+    HideSelection = False
+    Left = 396
+    OnChange = CaptchaEditChange
+    ShowFocus = True
+    TabOrder = 0
+    Text = '5210'
+    Top = 135
     Width = 100
   end
 end
