@@ -69,7 +69,7 @@ object MainForm: TMainForm
     Top = 52
     Width = 100
   end
-  object WebButton4: TWebButton
+  object IMInitBtn: TWebButton
     Caption = 'Init'
     Color = clNone
     Default = False
@@ -81,7 +81,7 @@ object MainForm: TMainForm
     Font.Style = []
     Height = 25
     Left = 5
-    OnClick = WebButton4Click
+    OnClick = IMInitBtnClick
     Role = 'button'
     TabOrder = 0
     Top = 11
@@ -207,7 +207,7 @@ object MainForm: TMainForm
     Top = 52
     Width = 248
   end
-  object WebButton7: TWebButton
+  object IMLoginBtn: TWebButton
     Caption = 'Login'
     Color = clNone
     Default = False
@@ -219,7 +219,7 @@ object MainForm: TMainForm
     Font.Style = []
     Height = 25
     Left = 182
-    OnClick = WebButton7Click
+    OnClick = IMLoginBtnClick
     Role = 'button'
     TabOrder = 0
     Top = 94
@@ -355,6 +355,24 @@ object MainForm: TMainForm
     ShowFocus = True
     TabOrder = 0
     Top = 135
+    Width = 100
+  end
+  object WebButton7: TWebButton
+    Caption = 'GetConvList'
+    Color = clNone
+    Default = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Size = 8
+    Font.Style = []
+    Height = 25
+    Left = 5
+    OnClick = WebButton7Click
+    Role = 'button'
+    TabOrder = 0
+    Top = 291
     Width = 100
   end
 end

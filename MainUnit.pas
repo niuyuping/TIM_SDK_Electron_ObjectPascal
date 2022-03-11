@@ -12,7 +12,7 @@ type
     WebButton1: TWebButton;
     WebButton2: TWebButton;
     WebButton3: TWebButton;
-    WebButton4: TWebButton;
+    IMInitBtn: TWebButton;
     DebugMemo: TWebMemo;
     WebButton5: TWebButton;
     WebButton6: TWebButton;
@@ -20,7 +20,7 @@ type
     WebLabel2: TWebLabel;
     UserIDEdit: TWebEdit;
     UserSigEdit: TWebEdit;
-    WebButton7: TWebButton;
+    IMLoginBtn: TWebButton;
     WebButton8: TWebButton;
     WebButton9: TWebButton;
     WebButton10: TWebButton;
@@ -28,6 +28,7 @@ type
     PhoneNumberEdit: TWebEdit;
     LoginBtn: TWebButton;
     CaptchaEdit: TWebEdit;
+    WebButton7: TWebButton;
     procedure WebButton2Click(Sender: TObject);
     procedure WebButton3Click(Sender: TObject);
     procedure WebButton4Click(Sender: TObject);
@@ -41,6 +42,8 @@ type
     procedure WebButton10Click(Sender: TObject);
     procedure CaptchaEditChange(Sender: TObject);
     procedure LoginBtnClick(Sender: TObject);
+    procedure IMLoginBtnClick(Sender: TObject);
+    procedure IMInitBtnClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -65,6 +68,9 @@ type
     procedure OnTIMLogin(AResult: TTIMCommonResponse);
     procedure OnTIMLogout(AResult: TTIMCommonResponse);
     procedure OnTIMGetUserProfileList(AResult: TTIMCommonResponse);
+    procedure OnTIMGetConvList(AResult: TTIMCommonResponse);
+    procedure OnTIMConvEvent(AConvEvent: NativeInt; AJSONConvArray: JSValue; AUserData: JSValue);
+    procedure OnTIMConvTotalUnreadMessageCountChanged(ATotalUnreadCount: NativeInt; AUserData: JSValue);
 
     //盈单REST相关的事件
     procedure OnYDReqError(AMessage: String; AUserData: JSValue);
@@ -81,6 +87,16 @@ implementation
 
 uses
   TypInfo, YDSMSTypeUnit, YDLoginTypeUnit, ConstUnit;
+
+procedure TMainForm.IMInitBtnClick(Sender: TObject);
+begin
+  TIMRenderer.Init;    
+end;
+
+procedure TMainForm.IMLoginBtnClick(Sender: TObject);
+begin
+  TIMRenderer.Login(UserIDEdit.Text, UserSigEdit.Text);  
+end;
 
 procedure TMainForm.LoginBtnClick(Sender: TObject);
 begin
@@ -109,7 +125,7 @@ end;
 
 procedure TMainForm.WebButton7Click(Sender: TObject);
 begin
-  TIMRenderer.Login(UserIDEdit.Text, UserSigEdit.Text);
+  TIMRenderer.GetConvList;
 end;
 
 procedure TMainForm.WebButton6Click(Sender: TObject);
@@ -139,6 +155,9 @@ begin
   TIMRenderer.OnLogin:=OnTIMLogin;
   TIMRenderer.OnLogout:=OnTIMLogout;
   TIMRenderer.OnGetUserProfileList:=OnTIMGetUserProfileList;
+  TIMRenderer.SetConvEventCallback(@OnTIMConvEvent);
+  TIMRenderer.SetConvTotalUnreadMessageCountChangedCallback(@OnTIMConvTotalUnreadMessageCountChanged);
+  TIMRenderer.OnGetConvList:=OnTIMGetConvList;
 
   YDRequestor:=TYDRequestor.Create(Self);
   YDRequestor.BaseURL:=YD_BASE_URL;
@@ -154,7 +173,6 @@ end;
 
 procedure TMainForm.WebButton4Click(Sender: TObject);
 begin
-  TIMRenderer.Init;  
 end;
 
 procedure TMainForm.WebButton3Click(Sender: TObject);
@@ -244,9 +262,39 @@ end;
 
 procedure TMainForm.OnYDLogin(AResult: TYDCommonResponse; AUserData: JSValue);
 begin
-  DebugMemo.Lines.Add(Format('YD login: %d %s %s', [AResult.code, AResult.status, AResult.message]));
+  DebugMemo.Lines.Add(Format('YD login: %s %s %s', [AResult.code, AResult.status, AResult.message]));
+  if AResult.code = '0' then
+  begin
+    DebugMemo.Lines.Add(Format('userID: %s, userSig: %s, token: %s', [TYDLoginResponse(AResult.data).id, TYDLoginResponse(AResult.data).userSig, TYDLoginResponse(AResult.data).token]));
+    UserSigEdit.Text:=TYDLoginResponse(AResult.data).userSig;
+    UserIDEdit.Text:=TYDLoginResponse(AResult.data).id;
+    IMInitBtnClick(Self);
+    IMLoginBtnClick(Self);
+  end;
+end;
+
+procedure TMainForm.OnTIMGetConvList(AResult: TTIMCommonResponse);
+var
+  TmpConvInfoList: TTIMConvInfoArray;
+begin
+  DebugMemo.Lines.Add(Format('Get conv list: %d', [AResult.code]));    
   if AResult.code = 0 then
-    DebugMemo.Lines.Add(Format('userID: %d, userSig: %s, token: %s', [TYDLoginResponse(AResult.data).id, TYDLoginResponse(AResult.data).userSig, TYDLoginResponse(AResult.data).token]));
+  begin
+    TmpConvInfoList:= TTIMConvInfoArray(TJSJSON.parse(String(AResult.json_param)));
+    console.log(TmpConvInfoList);
+  end;
+end;
+
+procedure TMainForm.OnTIMConvEvent(AConvEvent: NativeInt; AJSONConvArray: JSValue; AUserData: JSValue);
+begin
+  DebugMemo.Lines.Add(Format('Conv event: %d', [AConvEvent]));
+  if Length(String(AJSONConvArray)) > 0 then
+    console.log(TTIMConvInfoArray(TJSJSON.parse(String(AJSONConvArray))));
+end;
+
+procedure TMainForm.OnTIMConvTotalUnreadMessageCountChanged(ATotalUnreadCount: NativeInt; AUserData: JSValue);
+begin
+  DebugMemo.Lines.Add(Format('Unread message count: %d', [ATotalUnreadCount]));
 end;
 
 initialization

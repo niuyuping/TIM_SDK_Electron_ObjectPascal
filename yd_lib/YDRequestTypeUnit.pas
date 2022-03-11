@@ -11,11 +11,11 @@ interface
 type
   //标准盈单REST返回结构
   TYDCommonResponse = record
-    code: NativeInt;
+    code: String;
     data: JSValue;
     message: String;
     status: String;
-    timestamp: NativeUInt;
+    timestamp: String;
   end;
   
   //标准盈单REST事件

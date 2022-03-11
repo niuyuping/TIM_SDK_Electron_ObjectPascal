@@ -110,6 +110,20 @@ type
     
     //获取用户资料
     procedure GetUserProfileList(AUserIDList: array of string; AForceUpdate: Boolean; AUserData: JSValue = Nil);
+
+    //设置会话回调
+    procedure SetConvEventCallback(AProc: TTIMConvEventCallback; AUserData: JSValue = Nil);
+    
+    //会话列表未读消息变更回调
+    procedure SetConvTotalUnreadMessageCountChangedCallback(AProc: TTIMConvTotalUnreadMessageCountChangedCallback; AUserData: JSValue = Nil);
+
+    FOnGetConvList: TTIMOnGetConvList;
+    property OnGetConvList: TTIMOnGetConvList read FOnGetConvList write FOnGetConvList;
+    FOnGetConvListError: TTIMOnGetConvList_Error;
+    property OnGetConvListError: TTIMOnGetConvList_Error read FOnGetConvListError write FOnGetConvListError;
+
+    //获取最近联系人列表
+    procedure GetConvList(AUserData: JSValue = Nil);
   end;
 
 implementation
@@ -527,6 +541,80 @@ begin
         friendship_getprofilelist_param_identifier_array: AUserIDList,
         friendship_getprofilelist_param_force_update: AForceUpdate
       },
+      userData: AUserData
+    }).then((result) => {
+      tmpOnSucc(result.data)
+    }).catch((err) => {
+      tmpOnError(err)
+    });   
+  end;
+  
+end;
+
+{
+******************************************************
+SetConvEventCallback
+******************************************************
+}
+
+procedure TTIMRenderer.SetConvEventCallback(AProc: TTIMConvEventCallback; AUserData: JSValue);
+begin
+  asm //JavaScript
+    timRendererInstance.TIMSetConvEventCallback({
+      callback:(...args)=>{
+        AProc(args[0][0], args[0][1], args[0][2])
+      },
+      user_data: AUserData
+    }) 
+  end;     
+end;
+
+{
+******************************************************
+SetConvTotalUnreadMessageCountChangedCallback
+******************************************************
+}
+
+procedure TTIMRenderer.SetConvTotalUnreadMessageCountChangedCallback(AProc: TTIMConvTotalUnreadMessageCountChangedCallback; AUserData: JSValue);
+begin
+  asm //JavaScript
+    timRendererInstance.TIMSetConvTotalUnreadMessageCountChangedCallback({
+      callback:(...args)=>{
+        AProc(args[0][0], args[0][1])
+      },
+      user_data: AUserData
+    })
+  end;       
+end;
+
+{
+******************************************************
+GetConvList
+******************************************************
+}
+
+procedure TTIMRenderer.GetConvList(AUserData: JSValue);
+
+  procedure jsOnGetConvList(AResult: TTIMCommonResponse);
+  begin
+    if Assigned(FOnGetConvList) then
+      FOnGetConvList(AResult);    
+  end;
+
+  procedure jsOnGetConvListError(AError: JSValue);
+  begin
+    if Assigned(FOnGetConvListError) then
+      FOnGetConvListError(AError);  
+  end;
+
+var
+  tmpOnSucc, tmpOnError: Pointer; 
+begin
+  tmpOnSucc:=@jsOnGetConvList;
+  tmpOnError:=@jsOnGetConvListError;
+  
+  asm //JavaScript
+    timRendererInstance.TIMConvGetConvList({
       userData: AUserData
     }).then((result) => {
       tmpOnSucc(result.data)

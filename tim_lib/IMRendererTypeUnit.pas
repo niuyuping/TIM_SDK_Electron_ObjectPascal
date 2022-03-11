@@ -77,6 +77,17 @@ type
   //获取用户资料事件
   TTIMOnGetUserProfileList = TTIMCommonEvent;
   TTIMOnGetUserProfileList_Error = TTIMErrorEvent;
+
+  //会话事件回调
+  TTIMConvEventCallback = procedure (AConvEvent: NativeInt; AJSONConvArray: JSValue; AUserData: JSValue) of object;
+
+  //会话列表未读消息总数变更回调
+  TTIMConvTotalUnreadMessageCountChangedCallback = procedure(ATotalUnreadCount: NativeInt; AUserData: JSValue) of object;
+
+  //获取最近联系人的会话列表
+  TTIMOnGetConvList = TTIMCommonEvent;
+  TTIMOnGetConvList_Error = TTIMErrorEvent;
+
 implementation
 
 end.
