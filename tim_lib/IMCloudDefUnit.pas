@@ -81,14 +81,14 @@ type
     message_custom_str: String;                                //自定义数据字段（本地保存，不会发送到对端，程序卸载重装后失效）
     message_elem_array: array of TTIMCustomElem;               //消息内元素列表
     message_excluded_from_last_message: Boolean;               //是否作为会话的 lasgMessage，true - 不作为，false - 作为
-    message_has_sent_receipt: Boolean;                         //*****C Header里未找到相关定义？？？是否已经发送了“已读”凭据
+    message_has_sent_receipt: Boolean;                         //对于群消息接收者，是否发送了群消息已读回执
     message_is_excluded_from_unread_count: Boolean;            //消息是否不计入未读计数：默认为 NO，表明需要计入未读计数，设置为 YES，表明不需要计入未读计数
     message_is_from_self: Boolean;                             //消息是否来自自己
     message_is_online_msg: Boolean;                            //消息是否是在线消息，false表示普通消息,true表示阅后即焚消息，默认为false
     message_is_peer_read: Boolean;                             //消息是否被会话对方已读
     message_is_read: Boolean;                                  //消息是否已读
     message_msg_id: String;                                    //消息的唯一标识
-    message_need_read_receipt: Boolean;                        //*****C Header里未找到相关定义？？？是否需要已读凭据
+    message_need_read_receipt: Boolean;                        //群消息是否需要已读回执
     message_platform: NativeInt;                               //发送消息的平台
     message_priority: NativeInt;                               //消息优先级
     message_rand: NativeInt;                                   //消息的随机码
@@ -99,8 +99,8 @@ type
     message_server_time: NativeUInt;                           //服务端时间
     message_status: NativeInt;                                 //消息当前状态
     message_unique_id: NativeUInt;                             //消息的唯一标识，推荐使用 kTIMMsgMsgId
-    msg_receipt_read_count: NativeInt;                         //*****C Header里未找到相关定义？？？消息凭据已读总数
-    msg_receipt_unread_count: NativeUInt;                      //*****C Header里未找到相关定义？？？消息凭据未读总数
+    msg_receipt_read_count: NativeInt;                         //群消息已读回执数
+    msg_receipt_unread_count: NativeUInt;                      //群消息未读回执数
   end;
   
   {
@@ -168,17 +168,28 @@ const
   TIM_ERR_CONV = -5;     // 接口调用失败，无效的会话
   TIM_ERR_GROUP = -6;    // 接口调用失败，无效的群组
 
-{
+  {
   ****************************************
   会话事件类型 TIMConvEvent
   ****************************************
-}
+  }
 
   kTIMConvEvent_Add = 0;    // 会话新增,例如收到一条新消息,产生一个新的会话是事件触发
   kTIMConvEvent_Del = 1;    // 会话删除,例如自己删除某会话时会触发
   kTIMConvEvent_Update = 2; // 会话更新,会话内消息的未读计数变化和收到新消息时触发
   kTIMConvEvent_Start = 3;  // 会话开始
   kTIMConvEvent_Finish = 4; // 会话结束
+
+  {
+  ****************************************
+  会话类型 TIMConvType
+  ****************************************
+  }
+
+  kTIMConv_Invalid = 0; // 无效会话
+  kTIMConv_C2C = 1;     // 个人会话
+  kTIMConv_Group = 2;   // 群组会话
+  kTIMConv_System = 3;  // 系统会话
 
 implementation
 

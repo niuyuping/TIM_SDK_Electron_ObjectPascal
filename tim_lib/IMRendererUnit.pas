@@ -41,7 +41,13 @@ type
 
     FOnGetUserProfileList: TTIMOnGetUserProfileList;
     FOnGetUserProfileListError: TTIMOnGetUserProfileList_Error;
-  protected 
+
+    FOnConvCreate: TTIMOnConvCreate;
+    FOnConvCreateError: TTIMOnConvCreate_Error;
+
+    FOnConvDelete: TTIMOnConvDelete;
+    FOnConvDeleteError: TTIMOnConvDelete_Error;
+protected 
   public
     constructor Create;
   
@@ -124,7 +130,19 @@ type
 
     //获取最近联系人列表
     procedure GetConvList(AUserData: JSValue = Nil);
-  end;
+
+    property OnConvCreate: TTIMOnConvCreate read FOnConvCreate write FOnConvCreate;
+    property OnConvCreateError: TTIMOnConvCreate_Error read FOnConvCreateError write FOnConvCreateError;
+
+    //创建会话
+    procedure ConvCreate(AConvID: String; AConvType: NativeInt; AUserData: JSValue = Nil);
+
+    property OnConvDelete: TTIMOnConvDelete read FOnConvDelete write FOnConvDelete;
+    property OnConvDeleteError: TTIMOnConvDelete_Error read FOnConvDeleteError write FOnConvDeleteError;
+    
+    //删除会话
+    procedure ConvDelete(AConvID: String; AConvType: NativeInt; AUserData: JSValue = Nil);
+end;
 
 implementation
 
@@ -615,6 +633,86 @@ begin
   
   asm //JavaScript
     timRendererInstance.TIMConvGetConvList({
+      userData: AUserData
+    }).then((result) => {
+      tmpOnSucc(result.data)
+    }).catch((err) => {
+      tmpOnError(err)
+    });   
+  end;
+  
+end;
+
+{
+******************************************************
+ConvCreate
+******************************************************
+}
+
+procedure TTIMRenderer.ConvCreate(AConvID: String; AConvType: NativeInt; AUserData: JSValue);
+
+  procedure jsOnConvCreate(AResult: TTIMCommonResponse);
+  begin
+    if Assigned(FOnConvCreate) then
+      FOnConvCreate(AResult);    
+  end;
+
+  procedure jsOnConvCreateError(AError: JSValue);
+  begin
+    if Assigned(FOnConvCreateError) then
+      FOnConvCreateError(AError);  
+  end;
+
+var
+  tmpOnSucc, tmpOnError: Pointer; 
+begin
+  tmpOnSucc:=@jsOnConvCreate;
+  tmpOnError:=@jsOnConvCreateError;
+  
+  asm //JavaScript
+    timRendererInstance.TIMConvCreate({
+      convId: AConvID,
+      convType: AConvType,
+      userData: AUserData
+    }).then((result) => {
+      tmpOnSucc(result.data)
+    }).catch((err) => {
+      tmpOnError(err)
+    });   
+  end;
+  
+end;
+
+{
+******************************************************
+ConvDelete
+******************************************************
+}
+
+procedure TTIMRenderer.ConvDelete(AConvID: String; AConvType: NativeInt; AUserData: JSValue);
+
+  procedure jsOnConvDelete(AResult: TTIMCommonResponse);
+  begin
+    if Assigned(FOnConvDelete) then
+      FOnConvDelete(AResult);    
+  end;
+
+  procedure jsOnConvDeleteError(AError: JSValue);
+  begin
+    if Assigned(FOnConvDeleteError) then
+      FOnConvDeleteError(AError);  
+  end;
+
+var
+  tmpOnSucc, tmpOnError: Pointer; 
+begin
+  tmpOnSucc:=@jsOnConvDelete;
+  tmpOnError:=@jsOnConvDeleteError;
+  
+  asm //JavaScript
+    timRendererInstance.TIMConvDelete({
+      convId: AConvID,
+      convType: AConvType,
       userData: AUserData
     }).then((result) => {
       tmpOnSucc(result.data)

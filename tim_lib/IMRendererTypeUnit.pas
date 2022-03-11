@@ -88,6 +88,14 @@ type
   TTIMOnGetConvList = TTIMCommonEvent;
   TTIMOnGetConvList_Error = TTIMErrorEvent;
 
+  //创建会话事件
+  TTIMOnConvCreate = TTIMCommonEvent;
+  TTIMOnConvCreate_Error = TTIMErrorEvent;
+
+  //删除会话事件
+  TTIMOnConvDelete = TTIMCommonEvent;
+  TTIMOnConvDelete_Error = TTIMErrorEvent;
+
 implementation
 
 end.
