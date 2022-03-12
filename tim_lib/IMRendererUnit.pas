@@ -9,7 +9,7 @@ unit IMRendererUnit;
 interface
 
 uses
-  IMRendererTypeUnit;
+  IMRendererTypeUnit, IMCloudDefUnit;
 
 type
   //TIM Render
@@ -47,7 +47,11 @@ type
 
     FOnConvDelete: TTIMOnConvDelete;
     FOnConvDeleteError: TTIMOnConvDelete_Error;
-protected 
+
+    FAdvanceMessager: Pointer;
+  protected 
+    function GetAdvanceMessager: Pointer;
+    property AdvanceMessager: Pointer read GetAdvanceMessager;
   public
     constructor Create;
   
@@ -142,6 +146,61 @@ protected
     
     //删除会话
     procedure ConvDelete(AConvID: String; AConvType: NativeInt; AUserData: JSValue = Nil);
+
+    //设置接收新消息回调
+    procedure AddRecvNewMsgCallback(AProc: TTIMRecvNewMsgCallback; AUserData: JSValue = Nil);
+
+    //解除接收新消息回调
+    procedure RemoveRecvNewMsgCallback;
+
+    //设置消息内元素文件上传进度回调
+    procedure SetMsgElemUploadProgressCallback(AProc: TTIMMsgElemUploadProgressCallback; AUserData: JSValue = Nil);
+
+    //设置消息已读回执回调
+    procedure SetMsgReadedReceiptCallback(AProc: TTIMMsgReadedReceiptCallback; AUserData: JSValue = Nil);
+
+    //设置接收消息被撤回回调
+    procedure SetMsgRevokeCallback(AProc: TTIMMsgRevokeCallback; AUserData: JSValue = Nil);
+
+    FOnSendMessage: TTIMOnSendMessage;
+    property OnSendMessage: TTIMOnSendMessage read FOnSendMessage write FOnSendMessage;
+    FOnSendMessageError: TTIMOnSendMessage_Error;
+    property OnSendMessageError: TTIMOnSendMessage_Error read FOnSendMessageError write FOnSendMessageError;
+
+    //发送新消息
+    procedure SendMessager(AConvID: String; AConvType: NativeInt; AParams: TTIMMessage; AProc: TTIMSendMessageCallback; AUserData: JSValue = Nil; AMessageID: String = '');
+
+    FOnImportMsgList: TTIMOnImportMsgList;
+    property OnImportMsgList: TTIMOnImportMsgList read FOnImportMsgList write FOnImportMsgList;
+    FOnImportMsgListError: TTIMOnImportMsgList_Error;
+    property OnImportMsgListError: TTIMOnImportMsgList_Error read FOnImportMsgListError write FOnImportMsgListError;
+    
+    //向指定会话导入消息
+    procedure ImportMsgList(AConvID: String; AConvType: NativeInt; AParams: TTIMMessageArray; AUserData: JSValue);
+
+    FOnMsgReportReaded: TTIMOnMsgReportReaded;
+    property OnMsgReportReaded: TTIMOnMsgReportReaded read FOnMsgReportReaded write FOnMsgReportReaded;
+    FOnMsgReportReadedError: TTIMOnMsgReportReaded_Error;
+    property OnMsgReportReadedError: TTIMOnMsgReportReaded_Error read FOnMsgReportReadedError write FOnMsgReportReadedError;
+
+    //消息已读上报
+    procedure MsgReportReaded(AConvID: String; AConvType: NativeInt; AMessageID: String; AUserData: JSValue);
+
+    FOnMsgRevoke: TTIMOnMsgRevoke;
+    property OnMsgRevoke: TTIMOnMsgRevoke read FOnMsgRevoke write FOnMsgRevoke;
+    FOnMsgRevokeError: TTIMOnMsgRevoke_Error;
+    property OnMsgRevokeError: TTIMOnMsgRevoke_Error read FOnMsgRevokeError write FOnMsgRevokeError;
+
+    //消息撤回
+    procedure MsgRevoke(AConvID: String; AConvType: NativeInt; AMessageID: String; AUserData: JSValue);
+
+    FOnGetMsgList: TTIMOnGetMsgList;
+    property OnGetMsgList: TTIMOnGetMsgList read FOnGetMsgList write FOnGetMsgList;
+    FOnGetMsgListError: TTIMOnGetMsgList_Error;
+    property OnGetMsgListError: TTIMOnGetMsgList_Error read FOnGetMsgListError write FOnGetMsgListError;
+
+    //获取指定会话的消息列表
+    procedure GetMsgList(AConvID: String; AConvType: NativeInt; AParams: TTIMGetMsgListParam; AUserData: JSValue);
 end;
 
 implementation
@@ -721,6 +780,317 @@ begin
     });   
   end;
   
+end;
+
+{
+******************************************************
+AddRecvNewMsgCallback
+******************************************************
+}
+
+procedure TTIMRenderer.AddRecvNewMsgCallback(AProc: TTIMRecvNewMsgCallback; AUserData: JSValue);
+begin
+  asm //JavaScript
+    timRendererInstance.TIMAddRecvNewMsgCallback({
+      callback:(...args)=>{
+        AProc(args[0][0], args[0][1])
+      },
+      user_data: AUserData
+    })
+  end;         
+end;
+
+{
+******************************************************
+RemoveRecvNewMsgCallback
+******************************************************
+}
+
+procedure TTIMRenderer.RemoveRecvNewMsgCallback;
+begin
+  asm //JavaScript
+    timRendererInstance.TIMRemoveRecvNewMsgCallback()
+  end;           
+end;
+
+{
+******************************************************
+SetMsgElemUploadProgressCallback
+******************************************************
+}
+
+procedure TTIMRenderer.SetMsgElemUploadProgressCallback(AProc: TTIMMsgElemUploadProgressCallback; AUserData: JSValue);
+begin
+  asm //JavaScript
+    timRendererInstance.TIMSetMsgElemUploadProgressCallback({
+      callback:(...args)=>{
+        AProc(args[0][0], args[0][1], args[0][2], args[0][3], args[0][4])
+      },
+      user_data: AUserData
+    })
+  end;           
+end;
+
+{
+******************************************************
+SetMsgReadedReceiptCallback
+******************************************************
+}
+
+procedure TTIMRenderer.SetMsgReadedReceiptCallback(AProc: TTIMMsgReadedReceiptCallback; AUserData: JSValue);
+begin
+  asm //JavaScript
+    timRendererInstance.TIMSetMsgReadedReceiptCallback({
+      callback:(...args)=>{
+        AProc(args[0][0], args[0][1])
+      },
+      user_data: AUserData
+    })
+  end;             
+end;
+
+{
+******************************************************
+SetMsgRevokeCallback
+******************************************************
+}
+
+procedure TTIMRenderer.SetMsgRevokeCallback(AProc: TTIMMsgRevokeCallback; AUserData: JSValue);
+begin
+  asm //JavaScript
+    timRendererInstance.TIMSetMsgRevokeCallback({
+      callback:(...args)=>{
+        AProc(args[0][0], args[0][1])
+      },
+      user_data: AUserData
+    })
+  end;               
+end;
+
+{
+******************************************************
+Getter of property 'AdvanceMessager' ---- ignore
+******************************************************
+}
+
+function TTIMRenderer.GetAdvanceMessager: Pointer;
+var
+  TmpObj: Pointer;
+begin
+  asm  //JavaScript
+    if (typeof(timAdvanceMessagerInstance) == "undefined") {
+      timAdvanceMessagerInstance = new timAdvanceMessager()
+    }
+    TmpObj = timAdVanceMessagerInstance
+  end;
+  FAdvanceMessager:=TmpObj;
+  Result:=FAdvanceMessager;
+end;
+
+{
+******************************************************
+SendMessager
+******************************************************
+}
+
+procedure TTIMRenderer.SendMessager(AConvID: String; AConvType: NativeInt; AParams: TTIMMessage; AProc: TTIMSendMessageCallback; AUserData: JSValue; AMessageID: String);
+
+  procedure jsOnSendMessage(AMessageID: String);
+  begin
+    if Assigned(FOnSendMessage) then
+      FOnSendMessage(AMessageID);    
+  end;
+
+  procedure jsOnSendMessageError(AError: JSValue);
+  begin
+    if Assigned(FOnSendMessageError) then
+      FOnSendMessageError(AError);  
+  end;
+
+var
+  tmpOnSucc, tmpOnError: Pointer; 
+begin
+  tmpOnSucc:=@jsOnSendMessage;
+  tmpOnError:=@jsOnSendMessageError;
+  
+  asm //JavaScript
+    timRendererInstance.TIMMsgSendMessageV2({
+      conv_id: AConvID,
+      conv_type: AConvType,
+      params: AParams,
+      message_id: AMessageID,
+      callback: (...args) => {
+        AProc(args[0][0], args[0][1], args[0][2] ,args[0][3])
+      },
+      user_data: AUserData
+    }).then((result) => {
+      tmpOnSucc(result.data)
+    }).catch((err) => {
+      tmpOnError(err)
+    });   
+  end;
+  
+end;
+
+{
+******************************************************
+ImportMsgList
+******************************************************
+}
+
+procedure TTIMRenderer.ImportMsgList(AConvID: String; AConvType: NativeInt; AParams: TTIMMessageArray; AUserData: JSValue);
+
+  procedure jsOnImportMsgList(AResult: TTIMCommonResponse);
+  begin
+    if Assigned(FOnImportMsgList) then
+      FOnImportMsgList(AResult);    
+  end;
+
+  procedure jsOnImportMsgListError(AError: JSValue);
+  begin
+    if Assigned(FOnImportMsgListError) then
+      FOnImportMsgListError(AError);  
+  end;
+
+var
+  tmpOnSucc, tmpOnError: Pointer; 
+begin
+  tmpOnSucc:=@jsOnImportMsgList;
+  tmpOnError:=@jsOnImportMsgListError;
+  
+  asm //JavaScript
+    timRendererInstance.TIMMsgImportMsgList({
+      conv_id: AConvID,
+      conv_type: AConvType,
+      params: AParams,
+      user_data: AUserData
+    }).then((result) => {
+      tmpOnSucc(result.data)
+    }).catch((err) => {
+      tmpOnError(err)
+    });   
+  end;
+  
+end;
+
+{
+******************************************************
+GetMsgList
+******************************************************
+}
+
+procedure TTIMRenderer.GetMsgList(AConvID: String; AConvType: NativeInt; AParams: TTIMGetMsgListParam; AUserData: JSValue);
+
+  procedure jsOnGetMsgList(AResult: TTIMCommonResponse);
+  begin
+    if Assigned(FOnGetMsgList) then
+      FOnGetMsgList(AResult);    
+  end;
+
+  procedure jsOnGetMsgListError(AError: JSValue);
+  begin
+    if Assigned(FOnGetMsgListError) then
+      FOnGetMsgListError(AError);  
+  end;
+
+var
+  tmpOnSucc, tmpOnError: Pointer; 
+begin
+  tmpOnSucc:=@jsOnGetMsgList;
+  tmpOnError:=@jsOnGetMsgListError;
+  
+  asm //JavaScript
+    timRendererInstance.TIMMsgGetMsgList({
+      conv_id: AConvID,
+      conv_type: AConvType,
+      params: AParams,
+      user_data: AUserData
+    }).then((result) => {
+      tmpOnSucc(result.data)
+    }).catch((err) => {
+      tmpOnError(err)
+    });   
+  end;
+end;
+
+{
+******************************************************
+MsgRevoke
+******************************************************
+}
+
+procedure TTIMRenderer.MsgRevoke(AConvID: String; AConvType: NativeInt; AMessageID: String; AUserData: JSValue);
+
+  procedure jsOnMsgRevoke(AResult: TTIMCommonResponse);
+  begin
+    if Assigned(FOnMsgRevoke) then
+      FOnMsgRevoke(AResult);    
+  end;
+
+  procedure jsOnMsgRevokeError(AError: JSValue);
+  begin
+    if Assigned(FOnMsgRevokeError) then
+      FOnMsgRevokeError(AError);  
+  end;
+
+var
+  tmpOnSucc, tmpOnError: Pointer; 
+begin
+  tmpOnSucc:=@jsOnMsgRevoke;
+  tmpOnError:=@jsOnMsgRevokeError;
+  
+  asm //JavaScript
+    timRendererInstance.TIMMsgRevoke({
+      conv_id: AConvID,
+      conv_type: AConvType,
+      message_id: AParams,
+      user_data: AUserData
+    }).then((result) => {
+      tmpOnSucc(result.data)
+    }).catch((err) => {
+      tmpOnError(err)
+    });   
+  end;
+end;
+
+{
+******************************************************
+MsgReportReaded
+******************************************************
+}
+
+procedure TTIMRenderer.MsgReportReaded(AConvID: String; AConvType: NativeInt; AMessageID: String; AUserData: JSValue);
+
+  procedure jsOnMsgReportReaded(AResult: TTIMCommonResponse);
+  begin
+    if Assigned(FOnMsgReportReaded) then
+      FOnMsgReportReaded(AResult);    
+  end;
+
+  procedure jsOnMsgReportReadedError(AError: JSValue);
+  begin
+    if Assigned(FOnMsgReportReadedError) then
+      FOnMsgReportReadedError(AError);  
+  end;
+
+var
+  tmpOnSucc, tmpOnError: Pointer; 
+begin
+  tmpOnSucc:=@jsOnMsgReportReaded;
+  tmpOnError:=@jsOnMsgReportReadedError;
+  
+  asm //JavaScript
+    timRendererInstance.TIMMsgReportReaded({
+      conv_id: AConvID,
+      conv_type: AConvType,
+      message_id: AParams,
+      user_data: AUserData
+    }).then((result) => {
+      tmpOnSucc(result.data)
+    }).catch((err) => {
+      tmpOnError(err)
+    });   
+  end;
 end;
 
 end.

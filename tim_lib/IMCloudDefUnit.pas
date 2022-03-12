@@ -105,6 +105,14 @@ type
   
   {
   ****************************************
+  消息数组类型 TTIMMessageArray
+  ****************************************
+  }
+
+  TTIMMessageArray = array of TTIMMessage;
+
+  {
+  ****************************************
   会话信息类型 TTIMConvInfo
   ****************************************
   }
@@ -129,6 +137,22 @@ type
   }
 
   TTIMConvInfoArray = array of TTIMConvInfo;
+
+  {
+  ****************************************
+  拉取消息参数结构 TTIMGetMsgListParam
+  ****************************************
+  }
+
+  TTIMGetMsgListParam = record
+    kTIMMsgGetMsgListParamLastMsg: TTIMMessage; //指定的消息，不允许为null
+    kTIMMsgGetMsgListParamCount: NativeUInt;    //从指定消息往后的消息数
+    kTIMMsgGetMsgListParamIsRamble: Boolean;    //是否漫游消息
+    kTIMMsgGetMsgListParamIsForward: Boolean;   //是否向前排序
+    kTIMMsgGetMsgListParamLastMsgSeq: NativeUInt;  //指定的消息的 seq
+    kTIMMsgGetMsgListParamTimeBegin: NativeUInt;  //开始时间；UTC 时间戳， 单位：秒
+    kTIMMsgGetMsgListParamTimePeriod: NativeUInt;  //持续时间；单位：秒
+  end;
 const
   {
   ****************************************

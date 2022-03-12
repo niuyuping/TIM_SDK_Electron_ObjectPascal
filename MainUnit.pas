@@ -71,6 +71,10 @@ type
     procedure OnTIMGetConvList(AResult: TTIMCommonResponse);
     procedure OnTIMConvEvent(AConvEvent: NativeInt; AJSONConvArray: JSValue; AUserData: JSValue);
     procedure OnTIMConvTotalUnreadMessageCountChanged(ATotalUnreadCount: NativeInt; AUserData: JSValue);
+    procedure OnTIMRecvNewMsg(AJSONMsgArray: JSValue; AUserData: JSValue);
+    procedure OnTIMMsgElemUploadProgress(AJSONMsg: JSValue; AIndex, ACurSize, ALocalSize: NativeInt; AUserData: String);
+    procedure OnTIMMsgReadedReceipt(AJSONMsgReadedReceiptArray: JSValue; AUserData: JSValue);
+    procedure OnTIMMsgRevoke(AJSONMsgLocatorArray: JSValue; AUserData: JSValue);
 
     //盈单REST相关的事件
     procedure OnYDReqError(AMessage: String; AUserData: JSValue);
@@ -158,6 +162,10 @@ begin
   TIMRenderer.SetConvEventCallback(@OnTIMConvEvent);
   TIMRenderer.SetConvTotalUnreadMessageCountChangedCallback(@OnTIMConvTotalUnreadMessageCountChanged);
   TIMRenderer.OnGetConvList:=OnTIMGetConvList;
+  TIMRenderer.AddRecvNewMsgCallback(@OnTIMRecvNewMsg);
+  TIMRenderer.SetMsgElemUploadProgressCallback(@OnTIMMsgElemUploadProgress);
+  TIMRenderer.SetMsgReadedReceiptCallback(@OnTIMMsgReadedReceipt);
+  TIMRenderer.SetMsgRevokeCallback(@OnTIMMsgRevoke);
 
   YDRequestor:=TYDRequestor.Create(Self);
   YDRequestor.BaseURL:=YD_BASE_URL;
@@ -295,6 +303,26 @@ end;
 procedure TMainForm.OnTIMConvTotalUnreadMessageCountChanged(ATotalUnreadCount: NativeInt; AUserData: JSValue);
 begin
   DebugMemo.Lines.Add(Format('Unread message count: %d', [ATotalUnreadCount]));
+end;
+
+procedure TMainForm.OnTIMRecvNewMsg(AJSONMsgArray: JSValue; AUserData: JSValue);
+begin
+  DebugMemo.Lines.Add('New message');
+end;
+
+procedure TMainForm.OnTIMMsgElemUploadProgress(AJSONMsg: JSValue; AIndex: NativeInt; ACurSize: NativeInt; ALocalSize: NativeInt; AUserData: String);
+begin
+  DebugMemo.Lines.Add(Format('element upload: Index %d, Current %d, total %d', [AIndex, ACurSize, ALocalSize]));
+end;
+
+procedure TMainForm.OnTIMMsgReadedReceipt(AJSONMsgReadedReceiptArray: JSValue; AUserData: JSValue);
+begin
+  DebugMemo.Lines.Add('Message readed');
+end;
+
+procedure TMainForm.OnTIMMsgRevoke(AJSONMsgLocatorArray: JSValue; AUserData: JSValue);
+begin
+  DebugMemo.Lines.Add('Message revoke');
 end;
 
 initialization

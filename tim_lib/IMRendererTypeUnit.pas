@@ -95,7 +95,41 @@ type
   //删除会话事件
   TTIMOnConvDelete = TTIMCommonEvent;
   TTIMOnConvDelete_Error = TTIMErrorEvent;
+  
+  //收到新消息回调
+  TTIMRecvNewMsgCallback = procedure (AJSONMsgArray: JSValue; AUserData: JSValue) of object;
 
+  //消息内元素文件上传进度回调
+  TTIMMsgElemUploadProgressCallback = procedure (AJSONMsg: JSValue; AIndex, ACurSize, ALocalSize: NativeInt; AUserData: String) of object;
+
+  //消息已读回调
+  TTIMMsgReadedReceiptCallback = procedure (AJSONMsgReadedReceiptArray: JSValue; AUserData: JSValue) of object;
+
+  //消息撤回回调
+  TTIMMsgRevokeCallback = procedure (AJSONMsgLocatorArray: JSValue; AUserData: JSValue) of object;
+
+  //发送消息回调
+  TTIMSendMessageCallback = procedure (ACode: NativeInt; ADesc: JSValue; AJSONParam: JSValue; AUserData: JSValue) of object;
+
+  //发送消息事件
+  TTIMOnSendMessage = procedure(AMessageID: String) of object;
+  TTIMOnSendMessage_Error = TTIMErrorEvent;
+
+  //导入消息列表到指定会话事件
+  TTIMOnImportMsgList = TTIMCommonEvent;
+  TTIMOnImportMsgList_Error = TTIMErrorEvent;
+
+  //消息已读上报事件
+  TTIMOnMsgReportReaded = TTIMCommonEvent;
+  TTIMOnMsgReportReaded_Error = TTIMErrorEvent;
+
+  //消息撤回事件
+  TTIMOnMsgRevoke = TTIMCommonEvent;
+  TTIMOnMsgRevoke_Error = TTIMErrorEvent;
+
+  //获取指定会话消息列表事件
+  TTIMOnGetMsgList = TTIMCommonEvent;
+  TTIMOnGetMsgList_Error = TTIMErrorEvent;
 implementation
 
 end.

@@ -187,6 +187,7 @@
     <None Include="main.js"/>
     <None Include="ElectronMac.icns"/>
     <None Include="TIMRender.js"/>
+    <None Include="TIMAdvanceMessager.js"/>
     <RcItem Include="ElectronLinux.png">
       <ResourceType>RCDATA</ResourceType>
       <ResourceId>PngImage_1</ResourceId>
