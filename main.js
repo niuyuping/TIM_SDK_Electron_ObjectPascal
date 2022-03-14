@@ -40,9 +40,9 @@ function createWindow () {
 
   if (os.type() === 'Linux') {
     let icoPath = path.resolve(__dirname, './$(IconFileLinux)');
-    mainWindow = new BrowserWindow({ width: 0, height: 0, show: false, webPreferences: { nodeIntegration: true, enableRemoteModule: true }, useContentSize: true, icon: icoPath})
+    mainWindow = new BrowserWindow({ width: 0, height: 0, show: false, frame: false, webPreferences: { nodeIntegration: true, enableRemoteModule: true }, useContentSize: true, icon: icoPath})
   } else {
-    mainWindow = new BrowserWindow({ width: 0, height: 0, show: false, webPreferences: { nodeIntegration: true, enableRemoteModule: true }, useContentSize: true})
+    mainWindow = new BrowserWindow({ width: 0, height: 0, show: false, frame: false, webPreferences: { nodeIntegration: true, enableRemoteModule: true }, useContentSize: true})
   }
 
   if ('$(Mode)' === 'Release') {
@@ -589,6 +589,11 @@ ipcMain.handle("ipc-communication-setup", (event, args) => {
 
 ipcMain.handle("ipc-init-os-type", (event) => {
   return os.type();
+});
+
+ipcMain.handle("ipc-custom-window-close", (event, args) => {
+  let senderBW = BrowserWindow.fromWebContents(event.sender);
+  senderBW.close();
 });
 
 // In this file you can include the rest of your app's specific main process

@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, JS, Web, WEBLib.Graphics, WEBLib.Controls,
   WEBLib.Forms, WEBLib.Electron, WEBLib.Dialogs, WEBLib.Menus, WEBLib.StdCtrls,
-  IMRendererUnit, IMCloudDefUnit, IMRendererTypeUnit, YDRequestorUnit, YDRequestTypeUnit;
+  IMRendererUnit, IMCloudDefUnit, IMRendererTypeUnit, YDRequestorUnit, YDRequestTypeUnit, WEBLib.ExtCtrls;
 
 type
   TMainForm = class(TElectronForm)
@@ -29,6 +29,8 @@ type
     LoginBtn: TWebButton;
     CaptchaEdit: TWebEdit;
     WebButton7: TWebButton;
+    WebPanel1: TWebPanel;
+    WebButton4: TWebButton;
     procedure WebButton2Click(Sender: TObject);
     procedure WebButton3Click(Sender: TObject);
     procedure WebButton4Click(Sender: TObject);
@@ -44,6 +46,7 @@ type
     procedure LoginBtnClick(Sender: TObject);
     procedure IMLoginBtnClick(Sender: TObject);
     procedure IMInitBtnClick(Sender: TObject);
+    procedure MainFormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
 
@@ -90,7 +93,13 @@ implementation
 {$R *.dfm}
 
 uses
-  TypInfo, YDSMSTypeUnit, YDLoginTypeUnit, ConstUnit;
+  TypInfo, YDSMSTypeUnit, YDLoginTypeUnit, ConstUnit, libelectron;
+
+procedure TMainForm.MainFormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Action:=caMinimize;
+end;
+
 
 procedure TMainForm.IMInitBtnClick(Sender: TObject);
 begin
@@ -172,6 +181,9 @@ begin
   YDRequestor.OnReqError:=OnYDReqError;
   YDRequestor.OnSMS:=OnYDSMS;
   YDRequestor.OnLogin:=OnYDLogin;
+
+  document.getElementById('titleBar')['style']:=document.getElementById('titleBar')['style']+' -webkit-app-region: drag; -webkit-user-select: none;';
+  document.getElementById('formCloseBtn')['style']:=document.getElementById('formCloseBtn')['style']+' -webkit-app-region: no-drag;';
 end;
 
 procedure TMainForm.WebButton1Click(Sender: TObject);
@@ -181,6 +193,7 @@ end;
 
 procedure TMainForm.WebButton4Click(Sender: TObject);
 begin
+  Electron.IPCRenderer.invoke('ipc-custom-window-close');
 end;
 
 procedure TMainForm.WebButton3Click(Sender: TObject);
@@ -328,4 +341,4 @@ end;
 initialization
   RegisterClass(TMainForm);
 
-end.           
+end.                       
