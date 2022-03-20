@@ -11,7 +11,6 @@ object MainForm: TMainForm
   FormStyle = fsNormal
   Height = 800
   Left = 0
-  OnClose = MainFormClose
   OnCreate = Form1Create
   TabOrder = 0
   Top = 0
@@ -27,11 +26,11 @@ object MainForm: TMainForm
     Font.Size = 8
     Font.Style = []
     Height = 25
-    Left = 5
+    Left = 16
     OnClick = WebButton1Click
     Role = 'button'
     TabOrder = 0
-    Top = 177
+    Top = 520
     Width = 100
   end
   object WebButton2: TWebButton
@@ -45,48 +44,12 @@ object MainForm: TMainForm
     Font.Size = 8
     Font.Style = []
     Height = 25
-    Left = 5
+    Left = 16
     OnClick = WebButton2Click
     Role = 'button'
     TabOrder = 0
-    Top = 217
+    Top = 560
     Width = 100
-  end
-  object WebButton3: TWebButton
-    Caption = 'Uninit'
-    Color = clNone
-    Default = False
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Arial'
-    Font.Size = 8
-    Font.Style = []
-    Height = 25
-    Left = 5
-    OnClick = WebButton3Click
-    Role = 'button'
-    TabOrder = 0
-    Top = 135
-    Width = 100
-  end
-  object IMInitBtn: TWebButton
-    Caption = 'Init'
-    Color = clNone
-    Default = False
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Arial'
-    Font.Size = 8
-    Font.Style = []
-    Height = 25
-    Left = 5
-    OnClick = IMInitBtnClick
-    Role = 'button'
-    TabOrder = 0
-    Top = 94
-    Width = 104
   end
   object DebugMemo: TWebMemo
     Align = alRight
@@ -99,13 +62,13 @@ object MainForm: TMainForm
     Font.Size = 8
     Font.Style = []
     Height = 736
-    Left = 680
+    Left = 801
     ReadOnly = False
     Role = 'null'
     ShowFocus = True
     TabOrder = 0
     Top = 64
-    Width = 344
+    Width = 223
   end
   object WebButton5: TWebButton
     Caption = 'GetLoginStatus'
@@ -118,11 +81,11 @@ object MainForm: TMainForm
     Font.Size = 8
     Font.Style = []
     Height = 25
-    Left = 5
+    Left = 16
     OnClick = WebButton5Click
     Role = 'button'
     TabOrder = 0
-    Top = 255
+    Top = 600
     Width = 100
   end
   object WebButton6: TWebButton
@@ -136,131 +99,11 @@ object MainForm: TMainForm
     Font.Size = 8
     Font.Style = []
     Height = 25
-    Left = 5
+    Left = 16
     OnClick = WebButton6Click
     Role = 'button'
     TabOrder = 0
-    Top = 297
-    Width = 100
-  end
-  object WebLabel1: TWebLabel
-    Caption = 'UserID'
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Arial'
-    Font.Size = 8
-    Font.Style = []
-    Height = 18
-    Left = 149
-    Top = 101
-    Width = 32
-  end
-  object WebLabel2: TWebLabel
-    Caption = 'UserSig'
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Arial'
-    Font.Size = 8
-    Font.Style = []
-    Height = 37
-    Left = 149
-    Top = 139
-    Width = 40
-  end
-  object UserIDEdit: TWebEdit
-    Alignment = taLeftJustify
-    Color = clWindow
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Arial'
-    Font.Size = 8
-    Font.Style = []
-    Height = 24
-    HideSelection = False
-    Left = 190
-    ShowFocus = True
-    TabOrder = 0
-    Text = '1466591939850948610'
-    Top = 94
-    Width = 248
-  end
-  object UserSigEdit: TWebEdit
-    Alignment = taLeftJustify
-    Color = clWindow
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Arial'
-    Font.Size = 8
-    Font.Style = []
-    Height = 24
-    HideSelection = False
-    Left = 190
-    ShowFocus = True
-    TabOrder = 0
-    Text = 
-      'eJw9jlsKwjAURPeSb6k37W1MCn4INhVREHQDQlJ7jdbQh1bFvVta8XMeZ5g3O2z2' +
-      'ge08VZYlAlACTAbvbiuWsDAANurauKP3ZFjCEfqehEiOCRlbNpTTAHAUIlZcRUrG' +
-      'oFAK-h*gU5-vDGrDn7Lt0qx43aBcP9qw1ot0arJM6YvzUCxX4Vm77fwHNnTtv3GB' +
-      'QgHMED5f7PAyuA__'
-    Top = 135
-    Width = 248
-  end
-  object IMLoginBtn: TWebButton
-    Caption = 'Login'
-    Color = clNone
-    Default = False
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Arial'
-    Font.Size = 8
-    Font.Style = []
-    Height = 25
-    Left = 190
-    OnClick = IMLoginBtnClick
-    Role = 'button'
-    TabOrder = 0
-    Top = 177
-    Width = 100
-  end
-  object WebButton8: TWebButton
-    Caption = 'Logout'
-    Color = clNone
-    Default = False
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Arial'
-    Font.Size = 8
-    Font.Style = []
-    Height = 25
-    Left = 296
-    OnClick = WebButton8Click
-    Role = 'button'
-    TabOrder = 0
-    Top = 177
-    Width = 100
-  end
-  object WebButton9: TWebButton
-    Caption = 'GetUserProfileList'
-    Color = clNone
-    Default = False
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Arial'
-    Font.Size = 8
-    Font.Style = []
-    Height = 25
-    Left = 5
-    OnClick = WebButton9Click
-    Role = 'button'
-    TabOrder = 0
-    Top = 337
+    Top = 640
     Width = 100
   end
   object WebButton10: TWebButton
@@ -274,35 +117,10 @@ object MainForm: TMainForm
     Font.Size = 8
     Font.Style = []
     Height = 25
-    Left = 149
-    OnClick = WebButton10Click
+    Left = 14
     Role = 'button'
     TabOrder = 0
-    Top = 257
-    Width = 100
-  end
-  object SMSKindComboBox: TWebComboBox
-    Color = clWindow
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Arial'
-    Font.Size = 8
-    Font.Style = []
-    Height = 25
-    ItemIndex = 0
-    Items.Strings = (
-      'LOGIN'
-      'INVITATION'
-      'CHANGE_MOBILE'
-    )
-    Left = 149
-    Role = 'combobox'
-    ShowFocus = True
-    Style = csDropDownList
-    TabOrder = 0
-    Text = 'LOGIN'
-    Top = 217
+    Top = 113
     Width = 100
   end
   object PhoneNumberEdit: TWebEdit
@@ -316,11 +134,11 @@ object MainForm: TMainForm
     Font.Style = []
     Height = 24
     HideSelection = False
-    Left = 255
+    Left = 14
     ShowFocus = True
     TabOrder = 0
     Text = '18611545555'
-    Top = 218
+    Top = 82
     Width = 145
   end
   object LoginBtn: TWebButton
@@ -334,11 +152,11 @@ object MainForm: TMainForm
     Font.Size = 8
     Font.Style = []
     Height = 25
-    Left = 255
+    Left = 14
     OnClick = LoginBtnClick
     Role = 'button'
     TabOrder = 0
-    Top = 257
+    Top = 113
     Width = 100
   end
   object CaptchaEdit: TWebEdit
@@ -352,34 +170,18 @@ object MainForm: TMainForm
     Font.Style = []
     Height = 25
     HideSelection = False
-    Left = 404
+    Left = 162
     OnChange = CaptchaEditChange
     ShowFocus = True
     TabOrder = 0
-    Top = 218
-    Width = 100
-  end
-  object WebButton7: TWebButton
-    Caption = 'GetConvList'
-    Color = clNone
-    Default = False
-    Font.Charset = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -11
-    Font.Name = 'Arial'
-    Font.Size = 8
-    Font.Style = []
-    Height = 25
-    Left = 5
-    OnClick = WebButton7Click
-    Role = 'button'
-    TabOrder = 0
-    Top = 374
+    Text = '5210'
+    Top = 82
     Width = 100
   end
   object WebPanel1: TWebPanel
     Align = alTop
-    Caption = 'WebPanel1'
+    BorderStyle = bsNone
+    Caption = 'Demo'
     Color = clBtnFace
     ElementID = 'titleBar'
     Font.Charset = ANSI_CHARSET
@@ -394,7 +196,8 @@ object MainForm: TMainForm
     Top = 0
     Width = 1024
     object WebButton4: TWebButton
-      Caption = 'WebButton4'
+      Anchors = [akTop,akRight]
+      Caption = 'Close'
       Color = clNone
       Default = False
       ElementID = 'formCloseBtn'
@@ -412,5 +215,93 @@ object MainForm: TMainForm
       Top = 20
       Width = 100
     end
+    object WebImageControl1: TWebImageControl
+      Height = 40
+      Left = 26
+      Picture.Data = {}
+      Top = 15
+      Width = 40
+    end
+  end
+  object WebChatbox1: TWebChatbox
+    Align = alRight
+    ChatMessageFont.Charset = ANSI_CHARSET
+    ChatMessageFont.Color = clBlack
+    ChatMessageFont.Height = -11
+    ChatMessageFont.Name = 'Arial'
+    ChatMessageFont.Size = 12
+    ChatMessageFont.Style = []
+    ChatMessageInfoFont.Charset = ANSI_CHARSET
+    ChatMessageInfoFont.Color = clBlack
+    ChatMessageInfoFont.Height = -11
+    ChatMessageInfoFont.Name = 'Arial'
+    ChatMessageInfoFont.Size = 8
+    ChatMessageInfoFont.Style = [fsItalic]
+    DateTimeFormat = 'hh:nn:ss dd/mm/yy'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Size = 8
+    Font.Style = []
+    Height = 736
+    InputTextBoxFont.Charset = ANSI_CHARSET
+    InputTextBoxFont.Color = clBlack
+    InputTextBoxFont.Height = -11
+    InputTextBoxFont.Name = 'Arial'
+    InputTextBoxFont.Size = 12
+    InputTextBoxFont.Style = []
+    Left = 265
+    MessageHint = 'Enter your message here...'
+    Messages = <
+      item
+        ChatMessage = 'example of a sent message'
+        Sender = 'John Doe'
+        Timestamp = 44635.74649210648
+      end
+      item
+        ChatMessage = 'example of a received message'
+        Outline = olLeft
+        Sender = 'adam smith'
+        Timestamp = 44635.74649210648
+      end>
+    SendButtonColor = clWindow
+    SendButtonFont.Charset = ANSI_CHARSET
+    SendButtonFont.Color = clBlack
+    SendButtonFont.Height = -11
+    SendButtonFont.Name = 'Arial'
+    SendButtonFont.Size = 12
+    SendButtonFont.Style = []
+    TabOrder = 0
+    Top = 64
+    Username = 'anonymous'
+    Width = 536
+  end
+  object WebButton11: TWebButton
+    Caption = 'DevExpressBtn'
+    Color = clNone
+    Default = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Size = 8
+    Font.Style = []
+    Height = 24
+    Left = 16
+    OnClick = WebButton11Click
+    Role = 'button'
+    TabOrder = 0
+    Top = 680
+    Width = 100
+  end
+  object WebHTMLDiv1: TWebHTMLDiv
+    Anchors = [akLeft,akBottom]
+    ElementID = 'buttonContainer'
+    Height = 40
+    Left = 14
+    Role = 'null'
+    Top = 744
+    Width = 232
   end
 end

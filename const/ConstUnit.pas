@@ -12,6 +12,8 @@ const
   YD_REQ_LOGIN = 'v1/auth/register_login';
   YD_REQ_SMS = 'v1/sms/msg';
 
+  YD_FLAG_SELF = 'ME';
+
 implementation
 
 end.

@@ -182,12 +182,18 @@
     <DCCReference Include="yd_lib/YDSMSTypeUnit.pas"/>
     <DCCReference Include="yd_lib/YDLoginTypeUnit.pas"/>
     <DCCReference Include="const/ConstUnit.pas"/>
+    <DCCReference Include="yd_lib/YDUserTypeUnit.pas"/>
+    <DCCReference Include="tim_lib/YDProfileUnit.pas"/>
+    <DCCReference Include="yd_lib/YDAdapterUnit.pas"/>
+    <DCCReference Include="yd_lib/YDUserUnit.pas"/>
+    <DCCReference Include="yd_lib/YDAdapterTypeUnit.pas"/>
     <None Include="TryTIMSDK.html"/>
     <None Include="package.json"/>
     <None Include="main.js"/>
     <None Include="ElectronMac.icns"/>
     <None Include="TIMRender.js"/>
     <None Include="TIMAdvanceMessager.js"/>
+    <None Include="yd_lib/YDUserUnit"/>
     <RcItem Include="ElectronLinux.png">
       <ResourceType>RCDATA</ResourceType>
       <ResourceId>PngImage_1</ResourceId>

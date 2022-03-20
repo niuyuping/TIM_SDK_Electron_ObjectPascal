@@ -9,16 +9,35 @@ unit IMRendererUnit;
 interface
 
 uses
-  IMRendererTypeUnit, IMCloudDefUnit;
+  IMRendererTypeUnit, IMCloudDefUnit, classes;
 
 type
+  //TIM Event
+  TLogEvent = procedure(ALevel: NativeInt; ALog: String) of object;
+  
+  TConvCreateEvent = procedure(AConveArray: TTIMConvInfoArray) of object;
+
+  TConvDeleteEvent = procedure(AConveArray: TTIMConvInfoArray) of object;
+
+  TConvUpdateEvent = procedure(AConveArray: TTIMConvInfoArray) of object;
+
+  TNewMessageEvent = procedure(AMessageArray: TTIMMessageArray) of object;
+
+  TMsgElemUploadProgressEvent = procedure(AJSONMsg: JSValue; AIndex: NativeInt; ACurSize: NativeInt; ALocalSize: NativeInt) of object;
+
+  TMsgReceiptEvent = procedure(AMsgReceiptArray: TTIMMsgReceiptArray) of object;
+
+  TMsgRevokeEvent = procedure(AMsgLocatorArray: TTIMMsgLocatorArray) of object;
+
+  TUnreadMessageCountChangedEvent = procedure(AUnreadMessageCount: NativeInt) of object;
+
   //TIM Render
   TTIMRenderer = class (TObject)
   private
     FOnGetSDKVersion: TTIMOnGetSDKVersion;
     FOnGetSDKVersionError: TTIMOnGetSDKVersion_Error;
 
-    FOnGetServerTimer: TTIMOnGetServerTime;
+    FOnGetServerTime: TTIMOnGetServerTime;
     FOnGetServerTimeError: TTIMOnGetServerTime_Error;
 
     FOnInit: TTIMOnInit;
@@ -42,42 +61,55 @@ type
     FOnGetUserProfileList: TTIMOnGetUserProfileList;
     FOnGetUserProfileListError: TTIMOnGetUserProfileList_Error;
 
-    FOnConvCreate: TTIMOnConvCreate;
+    FOnConvCreate: TConvCreateEvent;
     FOnConvCreateError: TTIMOnConvCreate_Error;
 
-    FOnConvDelete: TTIMOnConvDelete;
+    FOnConvDelete: TConvDeleteEvent;
     FOnConvDeleteError: TTIMOnConvDelete_Error;
+  
+    FNetworkStatus: NativeInt;
+    FUnreadMessageCount: NativeInt;
 
     FAdvanceMessager: Pointer;
-  protected 
-    function GetAdvanceMessager: Pointer;
-    property AdvanceMessager: Pointer read GetAdvanceMessager;
-  public
-    constructor Create;
-  
+
+    FOnKickOff: TNotifyEvent;
+    FOnSigExpired: TNotifyEvent;
+    FOnNetworkStatusChanged: TNotifyEvent;
+
+    FOnGetConvList: TTIMOnGetConvList;
+    FOnGetConvListError: TTIMOnGetConvList_Error;
+
+    FOnSendMessage: TTIMOnSendMessage;
+    FOnSendMessageError: TTIMOnSendMessage_Error;
+
+    FOnImportMsgList: TTIMOnImportMsgList;
+    FOnImportMsgListError: TTIMOnImportMsgList_Error;
+
+    FOnMsgReportReaded: TTIMOnMsgReportReaded;
+    FOnMsgReportReadedError: TTIMOnMsgReportReaded_Error;
+
+    FOnGetMsgList: TTIMOnGetMsgList;
+    FOnGetMsgListError: TTIMOnGetMsgList_Error;
+
+    FOnLog: TLogEvent;
+    FOnConnected: TNotifyEvent;
+    FOnDisconnected: TNotifyEvent;
+    FOnConnecting: TNotifyEvent;
+    FOnConnectFailed: TNotifyEvent;
+    FOnConvUpdate: TConvUpdateEvent;
+    FOnConvUpdateStart: TNotifyEvent;
+    FOnConvUpdateFinish: TNotifyEvent;
+    FOnNewMessage: TNewMessageEvent;
+    FOnMsgElemUploadProgress: TMsgElemUploadProgressEvent;
+    FOnMsgReceipt: TMsgReceiptEvent;
+    FOnMsgRevoke: TMsgRevokeEvent;
+    FOnUnreadMessageCountChanged: TUnreadMessageCountChangedEvent;
+    FOnMsgRevokeError: TTIMOnMsgRevoke_Error;
+
+    FSDKVersion: String;
+
     property OnGetSDKVersion: TTIMOnGetSDKVersion read FOnGetSDKVersion write FOnGetSDKVersion;
     property OnGetSDKVersionError: TTIMOnGetSDKVersion_Error read FOnGetSDKVersionError write FOnGetSDKVersionError;
-
-    //取SDK版本号
-    procedure GetSDKVersion;
-
-    property OnGetServerTimer: TTIMOnGetServerTime read FOnGetServerTimer write FOnGetServerTimer;
-    property OnGetServerTimeError: TTIMOnGetServerTime_Error read FOnGetServerTimeError write FOnGetServerTimeError;
- 
-    //取服务器时间
-    procedure GetServerTime;
-
-    property OnInit: TTIMOnInit read FOnInit write FOnInit;
-    property OnInitError: TTIMOnInit_Error read FOnInitError write FOnInitError;
-
-    //初始化
-    procedure Init(AConfigPath: JSValue = Nil);
-
-    property OnUninitError: TTIMOnUninit_Error read FOnUninitError write FOnUninitError;
-    property OnUninit: TTIMOnUninit read FOnUninit write FOnUninit;
-
-    //反初始化
-    procedure Uninit;
 
     //设置网络状态回调
     procedure SetNetworkStatusListenerCallback(AProc: TTIMNetworkStatusListenerCallback; AUserData: JSValue = Nil);
@@ -91,61 +123,11 @@ type
     //设置Sig过期的回调
     procedure SetUserSigExpiredCallback(AProc: TTIMUserSigExpiredCallback; AUserData: JSValue = Nil);
 
-    property OnGetLoginStatus: TTIMOnGetLoginStatus read FOnGetLoginStatus write FOnGetLoginStatus;
-    property OnGetLoginStatusError: TTIMOnGetLoginStatus_Error read FOnGetLoginStatusError write FOnGetLoginStatusError;
-
-    //取登录状态
-    procedure GetLoginStatus;
-
-    property OnGetLoginUserID: TTIMOnGetLoginUserID read FOnGetLoginUserID write FOnGetLoginUserID;
-    property OnGetLoginUserIDError: TTIMOnGetLoginUserID_Error read FOnGetLoginUserIDError write FOnGetLoginUserIDError;
-
-    //取已登录用户的ID
-    procedure GetLoginUserID(AUserData: JSValue = Nil);
-
-    property OnLogin: TTIMOnLogin read FOnLogin write FOnLogin;
-    property OnLoginError: TTIMOnLogin_Error read FOnLoginError write FOnLoginError;
-    
-    //登录
-    procedure Login(AUserID, AUserSig: String; AUserData: JSValue = Nil);
-
-    property OnLogout: TTIMOnLogout read FOnLogout write FOnLogout;
-    property OnLogoutError: TTIMOnLogout_Error read FOnLogoutError write FOnLogoutError;
-
-    //登出
-    procedure Logout(AUserData: JSValue = Nil);
-
-    property OnGetUserProfileList: TTIMOnGetUserProfileList read FOnGetUserProfileList write FOnGetUserProfileList;
-    property OnGetUserProfileListError: TTIMOnGetUserProfileList_Error read FOnGetUserProfileListError write FOnGetUserProfileListError;
-    
-    //获取用户资料
-    procedure GetUserProfileList(AUserIDList: array of string; AForceUpdate: Boolean; AUserData: JSValue = Nil);
-
     //设置会话回调
     procedure SetConvEventCallback(AProc: TTIMConvEventCallback; AUserData: JSValue = Nil);
     
     //会话列表未读消息变更回调
     procedure SetConvTotalUnreadMessageCountChangedCallback(AProc: TTIMConvTotalUnreadMessageCountChangedCallback; AUserData: JSValue = Nil);
-
-    FOnGetConvList: TTIMOnGetConvList;
-    property OnGetConvList: TTIMOnGetConvList read FOnGetConvList write FOnGetConvList;
-    FOnGetConvListError: TTIMOnGetConvList_Error;
-    property OnGetConvListError: TTIMOnGetConvList_Error read FOnGetConvListError write FOnGetConvListError;
-
-    //获取最近联系人列表
-    procedure GetConvList(AUserData: JSValue = Nil);
-
-    property OnConvCreate: TTIMOnConvCreate read FOnConvCreate write FOnConvCreate;
-    property OnConvCreateError: TTIMOnConvCreate_Error read FOnConvCreateError write FOnConvCreateError;
-
-    //创建会话
-    procedure ConvCreate(AConvID: String; AConvType: NativeInt; AUserData: JSValue = Nil);
-
-    property OnConvDelete: TTIMOnConvDelete read FOnConvDelete write FOnConvDelete;
-    property OnConvDeleteError: TTIMOnConvDelete_Error read FOnConvDeleteError write FOnConvDeleteError;
-    
-    //删除会话
-    procedure ConvDelete(AConvID: String; AConvType: NativeInt; AUserData: JSValue = Nil);
 
     //设置接收新消息回调
     procedure AddRecvNewMsgCallback(AProc: TTIMRecvNewMsgCallback; AUserData: JSValue = Nil);
@@ -162,48 +144,151 @@ type
     //设置接收消息被撤回回调
     procedure SetMsgRevokeCallback(AProc: TTIMMsgRevokeCallback; AUserData: JSValue = Nil);
 
-    FOnSendMessage: TTIMOnSendMessage;
+  protected 
+    function GetAdvanceMessager: Pointer;
+    property AdvanceMessager: Pointer read GetAdvanceMessager;
+
+    //TIM Callback
+    procedure OnTIMLog(ALevel: NativeInt; ALog: String; AUserData: JSValue);
+    procedure OnTIMNetworkStatus(AStatus: NativeInt; ACode: NativeInt; ADesc: String; AUserData: JSValue);
+    procedure OnTIMKickedOffline(AUserData: JSValue);
+    procedure OnTIMUserSigExpired(AUserData: JSValue);
+    procedure OnTIMConvEvent(AConvEvent: NativeInt; AJSONConvArray: JSValue; AUserData: JSValue);
+    procedure OnTIMRecvNewMsg(AJSONMsgArray: JSValue; AUserData: JSValue);
+    procedure OnTIMMsgElemUploadProgress(AJSONMsg: JSValue; AIndex, ACurSize, ALocalSize: NativeInt; AUserData: String);
+    procedure OnTIMMsgReadedReceipt(AJSONMsgReadedReceiptArray: JSValue; AUserData: JSValue);
+    procedure OnTIMMsgRevoke(AJSONMsgLocatorArray: JSValue; AUserData: JSValue);
+    procedure OnTIMConvTotalUnreadMessageCountChanged(ATotalUnreadCount: NativeInt; AUserData: JSValue);
+
+    //取SDK版本号
+    [async]function GetSDKVersion: String;
+
+    //初始化
+    procedure Init(AConfigPath: JSValue = Nil);
+
+    //反初始化
+    procedure Uninit;
+  public
+    property SDKVersion: String read FSDKVersion;
+
+    property OnGetServerTime: TTIMOnGetServerTime read FOnGetServerTime write FOnGetServerTime;
+    property OnGetServerTimeError: TTIMOnGetServerTime_Error read FOnGetServerTimeError write FOnGetServerTimeError;
+ 
+    property OnInit: TTIMOnInit read FOnInit write FOnInit;
+    property OnInitError: TTIMOnInit_Error read FOnInitError write FOnInitError;
+
+    property OnUninitError: TTIMOnUninit_Error read FOnUninitError write FOnUninitError;
+    property OnUninit: TTIMOnUninit read FOnUninit write FOnUninit;
+
+    property OnGetLoginStatus: TTIMOnGetLoginStatus read FOnGetLoginStatus write FOnGetLoginStatus;
+    property OnGetLoginStatusError: TTIMOnGetLoginStatus_Error read FOnGetLoginStatusError write FOnGetLoginStatusError;
+
+    property OnGetLoginUserID: TTIMOnGetLoginUserID read FOnGetLoginUserID write FOnGetLoginUserID;
+    property OnGetLoginUserIDError: TTIMOnGetLoginUserID_Error read FOnGetLoginUserIDError write FOnGetLoginUserIDError;
+
+    property OnLogin: TTIMOnLogin read FOnLogin write FOnLogin;
+    property OnLoginError: TTIMOnLogin_Error read FOnLoginError write FOnLoginError;
+    
+    property OnLogout: TTIMOnLogout read FOnLogout write FOnLogout;
+    property OnLogoutError: TTIMOnLogout_Error read FOnLogoutError write FOnLogoutError;
+
+    property OnGetUserProfileList: TTIMOnGetUserProfileList read FOnGetUserProfileList write FOnGetUserProfileList;
+    property OnGetUserProfileListError: TTIMOnGetUserProfileList_Error read FOnGetUserProfileListError write FOnGetUserProfileListError;
+
+    property OnGetConvList: TTIMOnGetConvList read FOnGetConvList write FOnGetConvList;
+    property OnGetConvListError: TTIMOnGetConvList_Error read FOnGetConvListError write FOnGetConvListError;
+
+    property OnConvCreate: TConvCreateEvent read FOnConvCreate write FOnConvCreate;
+    property OnConvCreateError: TTIMOnConvCreate_Error read FOnConvCreateError write FOnConvCreateError;
+
+    property OnConvDelete: TConvDeleteEvent read FOnConvDelete write FOnConvDelete;
+    property OnConvDeleteError: TTIMOnConvDelete_Error read FOnConvDeleteError write FOnConvDeleteError;
+
+    property NetworkStatus: NativeInt read FNetworkStatus;
+    property UnreadMessageCount: NativeInt read FUnreadMessageCount;
+
+    property OnKickOff: TNotifyEvent read FOnKickOff write FOnKickOff;   
+    property OnSigExpired: TNotifyEvent read FOnSigExpired write FOnSigExpired;
+    property OnNetworkStatusChanged: TNotifyEvent read FOnNetworkStatusChanged write FOnNetworkStatusChanged;
+    property OnLog: TLogEvent read FOnLog write FOnLog;
+    property OnConnected: TNotifyEvent read FOnConnected write FOnConnected;
+    property OnDisconnected: TNotifyEvent read FOnDisconnected write FOnDisconnected;
+    property OnConnecting: TNotifyEvent read FOnConnecting write FOnConnecting;
+    property OnConnectFailed: TNotifyEvent read FOnConnectFailed write FOnConnectFailed;
+    property OnConvUpdate: TConvUpdateEvent read FOnConvUpdate write FOnConvUpdate;
+    property OnConvUpdateStart: TNotifyEvent read FOnConvUpdateStart write FOnConvUpdateStart;
+    property OnConvUpdateFinish: TNotifyEvent read FOnConvUpdateFinish write FOnConvUpdateFinish;
+    property OnNewMessage: TNewMessageEvent read FOnNewMessage write FOnNewMessage;
+    property OnMsgElemUploadProgress: TMsgElemUploadProgressEvent read FOnMsgElemUploadProgress write FOnMsgElemUploadProgress;
+    property OnMsgReceipt: TMsgReceiptEvent read FOnMsgReceipt write FOnMsgReceipt;
+    property OnMsgRevoke: TMsgRevokeEvent read FOnMsgRevoke write FOnMsgRevoke;
+    property OnUnreadMessageCountChanged: TUnreadMessageCountChangedEvent read FOnUnreadMessageCountChanged write FOnUnreadMessageCountChanged;
+
     property OnSendMessage: TTIMOnSendMessage read FOnSendMessage write FOnSendMessage;
-    FOnSendMessageError: TTIMOnSendMessage_Error;
     property OnSendMessageError: TTIMOnSendMessage_Error read FOnSendMessageError write FOnSendMessageError;
 
-    //发送新消息
-    procedure SendMessager(AConvID: String; AConvType: NativeInt; AParams: TTIMMessage; AProc: TTIMSendMessageCallback; AUserData: JSValue = Nil; AMessageID: String = '');
-
-    FOnImportMsgList: TTIMOnImportMsgList;
     property OnImportMsgList: TTIMOnImportMsgList read FOnImportMsgList write FOnImportMsgList;
-    FOnImportMsgListError: TTIMOnImportMsgList_Error;
     property OnImportMsgListError: TTIMOnImportMsgList_Error read FOnImportMsgListError write FOnImportMsgListError;
     
+    property OnMsgReportReaded: TTIMOnMsgReportReaded read FOnMsgReportReaded write FOnMsgReportReaded;
+    property OnMsgReportReadedError: TTIMOnMsgReportReaded_Error read FOnMsgReportReadedError write FOnMsgReportReadedError;
+
+    property OnMsgRevokeError: TTIMOnMsgRevoke_Error read FOnMsgRevokeError write FOnMsgRevokeError;
+
+    property OnGetMsgList: TTIMOnGetMsgList read FOnGetMsgList write FOnGetMsgList;
+    property OnGetMsgListError: TTIMOnGetMsgList_Error read FOnGetMsgListError write FOnGetMsgListError;
+
+    constructor Create; reintroduce;
+    destructor Destroy; reintroduce;
+
+    //取服务器时间
+    [async]function GetServerTime: uint64;
+
+    //取登录状态
+    [async]function GetLoginStatus: NativeInt;
+
+    //取已登录用户的ID
+    [async]function GetLoginUserID(AUserData: JSValue = Nil): String;
+
+    //登录
+    procedure Login(AUserID, AUserSig: String; AUserData: JSValue = Nil);
+
+    //登出
+    procedure Logout(AUserData: JSValue = Nil);
+
+    //获取用户资料
+    [async]function GetUserProfileList(AUserIDList: array of string; AForceUpdate: Boolean; AUserData: JSValue = Nil): TTIMUserProfileArray;
+
+    //获取最近联系人列表
+    [async]function GetConvList(AUserData: JSValue = Nil): TTIMConvInfoArray;
+
+    //创建会话
+    procedure ConvCreate(AConvID: String; AConvType: NativeInt; AUserData: JSValue = Nil);
+
+    //删除会话
+    procedure ConvDelete(AConvID: String; AConvType: NativeInt; AUserData: JSValue = Nil);
+
+    //发送新消息
+    procedure SendMessage(AConvID: String; AConvType: NativeInt; AParams: TTIMMessage; AProc: TTIMSendMessageCallback; AUserData: JSValue = Nil; AMessageID: String = '');
+
     //向指定会话导入消息
     procedure ImportMsgList(AConvID: String; AConvType: NativeInt; AParams: TTIMMessageArray; AUserData: JSValue);
-
-    FOnMsgReportReaded: TTIMOnMsgReportReaded;
-    property OnMsgReportReaded: TTIMOnMsgReportReaded read FOnMsgReportReaded write FOnMsgReportReaded;
-    FOnMsgReportReadedError: TTIMOnMsgReportReaded_Error;
-    property OnMsgReportReadedError: TTIMOnMsgReportReaded_Error read FOnMsgReportReadedError write FOnMsgReportReadedError;
 
     //消息已读上报
     procedure MsgReportReaded(AConvID: String; AConvType: NativeInt; AMessageID: String; AUserData: JSValue);
 
-    FOnMsgRevoke: TTIMOnMsgRevoke;
-    property OnMsgRevoke: TTIMOnMsgRevoke read FOnMsgRevoke write FOnMsgRevoke;
-    FOnMsgRevokeError: TTIMOnMsgRevoke_Error;
-    property OnMsgRevokeError: TTIMOnMsgRevoke_Error read FOnMsgRevokeError write FOnMsgRevokeError;
-
     //消息撤回
     procedure MsgRevoke(AConvID: String; AConvType: NativeInt; AMessageID: String; AUserData: JSValue);
 
-    FOnGetMsgList: TTIMOnGetMsgList;
-    property OnGetMsgList: TTIMOnGetMsgList read FOnGetMsgList write FOnGetMsgList;
-    FOnGetMsgListError: TTIMOnGetMsgList_Error;
-    property OnGetMsgListError: TTIMOnGetMsgList_Error read FOnGetMsgListError write FOnGetMsgListError;
-
     //获取指定会话的消息列表
     procedure GetMsgList(AConvID: String; AConvType: NativeInt; AParams: TTIMGetMsgListParam; AUserData: JSValue);
+
 end;
 
 implementation
+
+uses
+  Web, js, sysutils;
 
 {
 ******************************************************
@@ -211,11 +296,15 @@ TIMGetSDKVersion
 ******************************************************
 }
 
-procedure TTIMRenderer.GetSDKVersion;
+function TTIMRenderer.GetSDKVersion: String;
 
   //Event for success
   procedure jsOnGetSDKVersion(AVersion: String);
   begin
+    Result:=AVersion;
+
+    FSDKVersion:=AVersion;
+  
     if Assigned(FOnGetSDKVersion) then
       FOnGetSDKVersion(AVersion);
   end;
@@ -223,6 +312,10 @@ procedure TTIMRenderer.GetSDKVersion;
   //Event for error
   procedure jsOnGetSDKVersionError(AError: JSValue);
   begin
+    Result:='';
+
+    FSDKVersion:='';
+
     if Assigned(FOnGetSDKVersionError) then
       FOnGetSDKVersionError(AError);
   end;
@@ -234,7 +327,7 @@ begin
   tmpOnError:=@jsOnGetSDKVersionError;
  
   asm //JavaScript
-    timRendererInstance.TIMGetSDKVersion().then((result) => {
+    await timRendererInstance.TIMGetSDKVersion().then((result) => {
       tmpOnSucc(result.data)
     }).catch((err) => {
       tmpOnError(err)
@@ -248,18 +341,22 @@ TIMGetServerTime
 ******************************************************
 }
 
-procedure TTIMRenderer.GetServerTime;
+function TTIMRenderer.GetServerTime: uint64;
 
   procedure jsOnGetServerTimeError(AError: JSValue);
   begin
+    Result:=0;
+
     if Assigned(FOnGetServerTimeError) then
       FOnGetServerTimeError(AError);  
   end;
 
   procedure jsOnGetServerTime(AServerTime: NativeUInt);
   begin
-    if Assigned(FOnGetServerTimer) then
-      FOnGetServerTimer(AServerTime);  
+    Result:=AServerTime;
+
+    if Assigned(FOnGetServerTime) then
+      FOnGetServerTime(AServerTime);  
   end;
 
 var
@@ -269,7 +366,7 @@ begin
   tmpOnError:=@jsOnGetServerTimeError;
   
   asm //JavaScript
-    timRendererInstance.TIMGetServerTime().then((result) => {
+    await timRendererInstance.TIMGetServerTime().then((result) => {
       tmpOnSucc(result.data)
     }).catch((err) => {
       tmpOnError(err)
@@ -379,9 +476,33 @@ begin
   inherited;
   asm //JavaScript
      if (typeof timRendererInstance == 'undefined') {
-      timRendererInstance = new timRenderer();
+       timRendererInstance = new timRenderer();
      }   
   end;
+  //取SDK版本号
+  GetSDKVersion;
+  //设置日志回调
+  SetLogCallback(@OnTIMLog);
+  //设置网络状态回调
+  SetNetworkStatusListenerCallback(@OnTIMNetworkStatus);
+  //设置被踢下线的回调
+  SetKickedOfflineCallback(@OnTIMKickedOffline);
+  //设置Sig过期回调
+  SetUserSigExpiredCallback(@OnTIMUserSigExpired);
+  //设置会话事件回调
+  SetConvEventCallback(@OnTIMConvEvent);
+  //添加接收新消息的回调
+  AddRecvNewMsgCallback(@OnTIMRecvNewMsg);
+  //设置消息内元素上传进度的回调
+  SetMsgElemUploadProgressCallback(@OnTIMMsgElemUploadProgress);
+  //设置消息已读上报的回调
+  SetMsgReadedReceiptCallback(@OnTIMMsgReadedReceipt);
+  //设置消息撤回的回调
+  SetMsgRevokeCallback(@OnTIMMsgRevoke);
+  //设置未读消息总数变化的回调
+  SetConvTotalUnreadMessageCountChangedCallback(@OnTIMConvTotalUnreadMessageCountChanged);
+  //初始化
+  Init;
 end;
 
 {
@@ -444,16 +565,20 @@ GetLoginStatus
 ******************************************************
 }
 
-procedure TTIMRenderer.GetLoginStatus;
+function TTIMRenderer.GetLoginStatus: NativeInt;
 
   procedure jsOnGetLoginStatus(ALoginStatus: NativeInt);
   begin
+    Result:=ALoginStatus;
+ 
     if Assigned(FOnGetLoginStatus) then
       FOnGetLoginStatus(ALoginStatus);    
   end;
 
   procedure jsOnGetLoginStatusError(AError: JSValue);
   begin
+    Result:=-1;
+
     if Assigned(FOnGetLoginStatusError) then
       FOnGetLoginStatusError(AError);  
   end;
@@ -465,7 +590,7 @@ begin
   tmpOnError:=@jsOnGetLoginStatusError;
   
   asm //JavaScript
-    timRendererInstance.TIMGetLoginStatus().then((result) => {
+    await timRendererInstance.TIMGetLoginStatus().then((result) => {
       tmpOnSucc(result.data)
     }).catch((err) => {
       tmpOnError(err)
@@ -479,16 +604,20 @@ GetLoginUserID
 ******************************************************
 }
 
-procedure TTIMRenderer.GetLoginUserID(AUserData: JSValue = Nil);
+function TTIMRenderer.GetLoginUserID(AUserData: JSValue = Nil): String;
 
   procedure jsOnGetLoginUserID(AResult: TTIMCommonResponse);
   begin
+    Result:=String(AResult.json_param);
+
     if Assigned(FOnGetLoginUserID) then
       FOnGetLoginUserID(AResult);    
   end;
 
   procedure jsOnGetLoginUserIDError(AError: JSValue);
   begin
+    Result:='';
+
     if Assigned(FOnGetLoginUserIDError) then
       FOnGetLoginUserIDError(AError);  
   end;
@@ -500,7 +629,7 @@ begin
   tmpOnError:=@jsOnGetLoginUserIDError;
   
   asm //JavaScript
-    timRendererInstance.TIMGetLoginUserID({
+    await timRendererInstance.TIMGetLoginUserID({
       userData: AUserData
     }).then((result) => {
       tmpOnSucc(result.data)
@@ -592,18 +721,24 @@ GetUserProfileList
 ******************************************************
 }
 
-procedure TTIMRenderer.GetUserProfileList(AUserIDList: array of string; AForceUpdate: Boolean; AUserData: JSValue = Nil);
+function TTIMRenderer.GetUserProfileList(AUserIDList: array of string; AForceUpdate: Boolean; AUserData: JSValue = Nil): TTIMUserProfileArray;
 
   procedure jsOnGetUserProfileList(AResult: TTIMCommonResponse);
+  var
+    TmpResponse: TTIMUserProfileArray;
   begin
-    if Assigned(FOnGetUserProfileList) then
-      FOnGetUserProfileList(AResult);    
+    case AResult.code of
+      0: begin
+        TmpResponse:=TTIMUserProfileArray(TJSJSON.parse(String(AResult.json_param)));
+      end;
+    end;
+
+    Result:=TmpResponse;
   end;
 
   procedure jsOnGetUserProfileListError(AError: JSValue);
   begin
-    if Assigned(FOnGetUserProfileListError) then
-      FOnGetUserProfileListError(AError);  
+    Result:=Nil;
   end;
 
 var
@@ -613,12 +748,12 @@ begin
   tmpOnError:=@jsOnGetUserProfileListError;
   
   asm //JavaScript
-    timRendererInstance.TIMProfileGetUserProfileList({
+    await timRendererInstance.TIMProfileGetUserProfileList({
       json_get_user_profile_list_param: {
         friendship_getprofilelist_param_identifier_array: AUserIDList,
         friendship_getprofilelist_param_force_update: AForceUpdate
       },
-      userData: AUserData
+      user_data: AUserData
     }).then((result) => {
       tmpOnSucc(result.data)
     }).catch((err) => {
@@ -652,7 +787,7 @@ SetConvTotalUnreadMessageCountChangedCallback
 ******************************************************
 }
 
-procedure TTIMRenderer.SetConvTotalUnreadMessageCountChangedCallback(AProc: TTIMConvTotalUnreadMessageCountChangedCallback; AUserData: JSValue);
+procedure TTIMRenderer.SetConvTotalUnreadMessageCountChangedCallback(AProc: TTIMConvTotalUnreadMessageCountChangedCallback; AUserData: JSValue = Nil);
 begin
   asm //JavaScript
     timRendererInstance.TIMSetConvTotalUnreadMessageCountChangedCallback({
@@ -670,16 +805,27 @@ GetConvList
 ******************************************************
 }
 
-procedure TTIMRenderer.GetConvList(AUserData: JSValue);
+function TTIMRenderer.GetConvList(AUserData: JSValue): TTIMConvInfoArray;
 
   procedure jsOnGetConvList(AResult: TTIMCommonResponse);
+  var
+    TmpConvInfoArray: TTIMConvInfoArray;
   begin
+    if AResult.code = 0 then
+    begin
+      TmpConvInfoArray:= TTIMConvInfoArray(TJSJSON.parse(String(AResult.json_param)));
+    end;
+    
+    Result:=TmpConvInfoArray;
+
     if Assigned(FOnGetConvList) then
       FOnGetConvList(AResult);    
   end;
 
   procedure jsOnGetConvListError(AError: JSValue);
   begin
+    Result:=Nil;
+
     if Assigned(FOnGetConvListError) then
       FOnGetConvListError(AError);  
   end;
@@ -691,7 +837,7 @@ begin
   tmpOnError:=@jsOnGetConvListError;
   
   asm //JavaScript
-    timRendererInstance.TIMConvGetConvList({
+    await timRendererInstance.TIMConvGetConvList({
       userData: AUserData
     }).then((result) => {
       tmpOnSucc(result.data)
@@ -712,8 +858,8 @@ procedure TTIMRenderer.ConvCreate(AConvID: String; AConvType: NativeInt; AUserDa
 
   procedure jsOnConvCreate(AResult: TTIMCommonResponse);
   begin
-    if Assigned(FOnConvCreate) then
-      FOnConvCreate(AResult);    
+    // if Assigned(FOnConvCreate) then
+    //   FOnConvCreate(AResult);    
   end;
 
   procedure jsOnConvCreateError(AError: JSValue);
@@ -752,8 +898,8 @@ procedure TTIMRenderer.ConvDelete(AConvID: String; AConvType: NativeInt; AUserDa
 
   procedure jsOnConvDelete(AResult: TTIMCommonResponse);
   begin
-    if Assigned(FOnConvDelete) then
-      FOnConvDelete(AResult);    
+    // if Assigned(FOnConvDelete) then
+    //   FOnConvDelete(AResult);    
   end;
 
   procedure jsOnConvDeleteError(AError: JSValue);
@@ -889,11 +1035,11 @@ end;
 
 {
 ******************************************************
-SendMessager
+SendMessage
 ******************************************************
 }
 
-procedure TTIMRenderer.SendMessager(AConvID: String; AConvType: NativeInt; AParams: TTIMMessage; AProc: TTIMSendMessageCallback; AUserData: JSValue; AMessageID: String);
+procedure TTIMRenderer.SendMessage(AConvID: String; AConvType: NativeInt; AParams: TTIMMessage; AProc: TTIMSendMessageCallback; AUserData: JSValue; AMessageID: String);
 
   procedure jsOnSendMessage(AMessageID: String);
   begin
@@ -1023,8 +1169,8 @@ procedure TTIMRenderer.MsgRevoke(AConvID: String; AConvType: NativeInt; AMessage
 
   procedure jsOnMsgRevoke(AResult: TTIMCommonResponse);
   begin
-    if Assigned(FOnMsgRevoke) then
-      FOnMsgRevoke(AResult);    
+{    if Assigned(FOnMsgRevoke) then
+      FOnMsgRevoke(AResult);  }  
   end;
 
   procedure jsOnMsgRevokeError(AError: JSValue);
@@ -1091,6 +1237,162 @@ begin
       tmpOnError(err)
     });   
   end;
+end;
+
+//Log回调
+procedure TTIMRenderer.OnTIMLog(ALevel: NativeInt; ALog: String; AUserData: JSValue);
+begin
+//  console.log('TIM Log: ', ALevel, ALog);  
+  if Assigned(FOnLog) then
+    FOnLog(ALevel, ALog);
+end;
+
+//网络状态回调
+procedure TTIMRenderer.OnTIMNetworkStatus(AStatus: NativeInt; ACode: NativeInt; ADesc: String; AUserData: JSValue);
+begin
+  FNetworkStatus:=AStatus;
+  case AStatus of
+    kTIMConnected: begin
+      if Assigned(FOnConnected) then
+        FOnConnected(Self);
+    end; 
+    kTIMDisconnected: begin
+      if Assigned(FOnDisconnected) then
+        FOnDisconnected(Self);
+    end;
+    kTIMConnecting: begin
+      if Assigned(FOnConnecting) then
+        FOnConnecting(Self);
+    end;
+    kTIMConnectFailed: begin
+      if Assigned(FOnConnectFailed) then
+        FOnConnectFailed(Self);
+    end;
+  end;
+end;
+
+//被踢下线回调
+procedure TTIMRenderer.OnTIMKickedOffline(AUserData: JSValue);
+begin
+  if Assigned(FOnKickOff) then
+    FOnKickOff(Self);
+end;
+
+//Sig过期回调
+procedure TTIMRenderer.OnTIMUserSigExpired(AUserData: JSValue);
+begin
+  if Assigned(FOnSigExpired) then
+    FOnSigExpired(Self);
+end;
+
+//会话事件回调
+procedure TTIMRenderer.OnTIMConvEvent(AConvEvent: NativeInt; AJSONConvArray: JSValue; AUserData: JSValue);
+var
+  TmpConvInfoArray: TTIMConvInfoArray;
+begin
+  if AJSONConvArray<>'' then
+    TmpConvInfoArray:=TTIMConvInfoArray(TJSJSON.parse(String(AJSONConvArray)));
+//  console.log('Conv Event: ',AConvEvent, TmpConvInfoArray);
+
+  case AConvEvent of
+    kTIMConvEvent_Add: begin
+      //会话新增,例如收到一条新消息,产生一个新的会话是事件触发
+      if Assigned(FOnConvCreate) then
+        FOnConvCreate(TmpConvInfoArray);
+    end;
+    kTIMConvEvent_Del: begin
+      //会话删除,例如自己删除某会话时会触发
+      if Assigned(FOnConvDelete) then
+        FOnConvDelete(TmpConvInfoArray);
+    end;   
+    kTIMConvEvent_Update: begin
+      //会话更新,会话内消息的未读计数变化和收到新消息时触发
+      if Assigned(FOnConvUpdate) then
+        FOnConvUpdate(TmpConvInfoArray);
+    end;
+    kTIMConvEvent_Start: begin
+      //会话开始同步
+      if Assigned(FOnConvUpdateStart) then
+        FOnConvUpdateStart(Self);
+    end; 
+    kTIMConvEvent_Finish: begin
+      //会话结束同步
+      if Assigned(FOnConvUpdateFinish) then
+        FOnConvUpdateFinish(Self);
+    end;
+  end;
+end;
+
+//收到新消息回调
+procedure TTIMRenderer.OnTIMRecvNewMsg(AJSONMsgArray: JSValue; AUserData: JSValue);
+var
+  TmpMessageArray: TTIMMessageArray;
+begin
+  //收到新消息
+  if AJSONMsgArray<>'' then
+  begin
+    TmpMessageArray:=TTIMMessageArray(TJSJSON.parse(String(AJSONMsgArray)));
+    if Assigned(FOnNewMessage) then
+      FOnNewMessage(TmpMessageArray);
+  end;
+end;
+
+//消息内元素上传进度回调
+procedure TTIMRenderer.OnTIMMsgElemUploadProgress(AJSONMsg: JSValue; AIndex: NativeInt; ACurSize: NativeInt; ALocalSize: NativeInt; AUserData: String);
+var
+  TmpMessage: TTIMMessage;
+begin
+  if AJSONMsg<>'' then
+  begin
+    TmpMessage:=TTIMMessage(TJSJSON.parse(String(AJSONMsg)));
+    if Assigned(FOnMsgElemUploadProgress) then
+      FOnMsgElemUploadProgress(TmpMessage, AIndex, ACurSize, ALocalSize);
+  end;
+//  console.log(AJSONMsg, AIndex, ACurSize, ALocalSize);
+end;
+
+//消息已读上报回调
+procedure TTIMRenderer.OnTIMMsgReadedReceipt(AJSONMsgReadedReceiptArray: JSValue; AUserData: JSValue);
+var
+  TmpMessageReceiptArray: TTIMMsgReceiptArray;
+begin
+  if AJSONMsgReadedReceiptArray<>'' then
+  begin
+    TmpMessageReceiptArray:=TTIMMsgReceiptArray(TJSJSON.parse(String(AJSONMsgReadedReceiptArray)));
+    if Assigned(FOnMsgReceipt) then
+      FOnMsgReceipt(TmpMessageReceiptArray);
+  end;
+end;
+
+//消息撤回回调
+procedure TTIMRenderer.OnTIMMsgRevoke(AJSONMsgLocatorArray: JSValue; AUserData: JSValue);
+var
+  TmpMessageLocatorArray: TTIMMsgLocatorArray;
+begin
+  if AJSONMsgLocatorArray<>'' then
+  begin
+    TmpMessageLocatorArray:=TTIMMsgLocatorArray(TJSJSON.parse(String(AJSONMsgLocatorArray)));
+    if Assigned(FOnMsgRevoke) then
+      FOnMsgRevoke(TmpMessageLocatorArray);
+  end;
+//  console.log(AJSONMsgLocatorArray);
+end;
+
+//会话中的未读消息总数变化回调
+procedure TTIMRenderer.OnTIMConvTotalUnreadMessageCountChanged(ATotalUnreadCount: NativeInt; AUserData: JSValue);
+begin
+  FUnreadMessageCount:=ATotalUnreadCount;
+  if Assigned(FOnUnreadMessageCountChanged) then
+    FOnUnreadMessageCountChanged(ATotalUnreadCount);
+end;
+
+destructor TTIMRenderer.Destroy;
+begin
+  //退出登录状态
+  Logout;
+  //反初始化
+  Uninit;
+  inherited;
 end;
 
 end.

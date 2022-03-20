@@ -18,13 +18,11 @@ type
   //盈单REST通讯类
   TYDRequestor = class(TWebHTTPRequest)
   private
-    FBaseURL: String;
     FOnReqError: TOnRESTReq_Error;
 
     FOnSMS: TYDOnSMS;
     FOnLogin: TYDOnLogin;
   public
-    property BaseURL: String read FBaseURL write FBaseURL;
     property OnReqError: TOnRESTReq_Error read FOnReqError write FOnReqError;
 
     constructor Create(AOwner: TComponent); override;
@@ -59,7 +57,7 @@ var
   TmpResponse: TYDCommonResponse;
 begin
   //拼接地址和参数
-  URL:=Format('%s/%s/%s?phoneNum=%s&smsType=%s', [FBaseURL, YD_MOBILE_SERVER, YD_REQ_SMS, APhoneNumber, AKind]);
+  URL:=Format('%s/%s/%s?phoneNum=%s&smsType=%s', [YD_BASE_URL, YD_MOBILE_SERVER, YD_REQ_SMS, APhoneNumber, AKind]);
   with Headers do
   begin
     Clear;
@@ -87,7 +85,7 @@ var
   TmpResponse: TYDCommonResponse;
 begin
   //拼接地址和参数
-  URL:=Format('%s/%s/%s?platform=Mac', [FBaseURL, YD_MOBILE_SERVER, YD_REQ_LOGIN]);
+  URL:=Format('%s/%s/%s?platform=Mac', [YD_BASE_URL, YD_MOBILE_SERVER, YD_REQ_LOGIN]);
   with Headers do
   begin
     Clear;

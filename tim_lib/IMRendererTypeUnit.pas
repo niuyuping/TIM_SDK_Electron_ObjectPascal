@@ -77,7 +77,31 @@ type
   //获取用户资料事件
   TTIMOnGetUserProfileList = TTIMCommonEvent;
   TTIMOnGetUserProfileList_Error = TTIMErrorEvent;
+  
+  TTIMUserProfileCustomString = record
+    user_profile_custom_string_info_key: String;
+    user_profile_custom_string_info_value: String;
+  end;
 
+  TTIMUserProfileCustomStringArray = array of TTIMUserProfileCustomString;
+
+  TTIMUserProfile = record
+    user_profile_add_permission: NativeInt;
+    user_profile_birthday: NativeInt;
+    user_profile_custom_string_array: TTIMUserProfileCustomStringArray;
+    user_profile_face_url: String;
+    user_profile_gender: NativeInt;
+    user_profile_identifier: String;
+    user_profile_language: NativeInt;
+    user_profile_level: NativeInt;
+    user_profile_location: String;
+    user_profile_nick_name: String;
+    user_profile_role: NativeInt;
+    user_profile_self_signature: String;
+  end;
+
+  TTIMUserProfileArray = array of TTIMUserProfile;
+  
   //会话事件回调
   TTIMConvEventCallback = procedure (AConvEvent: NativeInt; AJSONConvArray: JSValue; AUserData: JSValue) of object;
 
@@ -89,11 +113,11 @@ type
   TTIMOnGetConvList_Error = TTIMErrorEvent;
 
   //创建会话事件
-  TTIMOnConvCreate = TTIMCommonEvent;
+  TTIMOnConvCreate = procedure(AConveArray: TTIMConvInfoArray) of object;
   TTIMOnConvCreate_Error = TTIMErrorEvent;
 
   //删除会话事件
-  TTIMOnConvDelete = TTIMCommonEvent;
+  TTIMOnConvDelete = procedure(AConveArray: TTIMConvInfoArray) of object;
   TTIMOnConvDelete_Error = TTIMErrorEvent;
   
   //收到新消息回调

@@ -153,6 +153,52 @@ type
     kTIMMsgGetMsgListParamTimeBegin: NativeUInt;  //开始时间；UTC 时间戳， 单位：秒
     kTIMMsgGetMsgListParamTimePeriod: NativeUInt;  //持续时间；单位：秒
   end;
+
+  {
+  ****************************************
+  消息定位符 TIMMsgLocator
+  ****************************************
+  }
+
+  TTIMMsgLocator = record
+    message_locator_conv_id: Boolean;    // bool,   读写,      要查找的消息所属的会话ID
+    message_locator_conv_type: Boolean;  // bool,   读写,      要查找的消息所属的会话类型
+    message_locator_is_revoked: Boolean; // bool,   读写(必填), 要查找的消息是否是被撤回。true表示被撤回的，false表示未撤回的。默认为false
+    message_locator_time: Int64;       // uint64, 读写(必填), 要查找的消息的时间戳
+    message_locator_seq: Int64;        // uint64, 读写(必填), 要查找的消息的序列号
+    message_locator_is_self: Boolean;    // bool,   读写(必填), 要查找的消息的发送者是否是自己。true表示发送者是自己，false表示发送者不是自己。默认为false
+    message_locator_rand: Int64;       // uint64, 读写(必填), 要查找的消息随机码
+    message_locator_unique_id: Int64;  // uint64, 读写(必填), 要查找的消息的唯一标识
+  end;
+
+  {
+  ****************************************
+  消息定位符数组 TIMMsgLocatorArray
+  ****************************************
+  }
+
+  TTIMMsgLocatorArray = array of TTIMMsgLocator;
+
+  {
+  ****************************************
+  已读回执 TIMMsgReceipt
+  ****************************************
+  }
+
+  TTIMMsgReceipt = record
+    msg_receipt_conv_id: String;     //string, 只读, 会话ID
+    msg_receipt_conv_type: NativeUInt;   //uint [TIMConvType](), 只读, 会话类型
+    msg_receipt_time_stamp: NativeUInt;  //uint64, 只读, 时间戳
+  end;
+
+  {
+  ****************************************
+  已读回执数组 TIMMsgReceiptArray
+  ****************************************
+  }
+
+  TTIMMsgReceiptArray = array of TTIMMsgReceipt;
+
 const
   {
   ****************************************
@@ -201,8 +247,8 @@ const
   kTIMConvEvent_Add = 0;    // 会话新增,例如收到一条新消息,产生一个新的会话是事件触发
   kTIMConvEvent_Del = 1;    // 会话删除,例如自己删除某会话时会触发
   kTIMConvEvent_Update = 2; // 会话更新,会话内消息的未读计数变化和收到新消息时触发
-  kTIMConvEvent_Start = 3;  // 会话开始
-  kTIMConvEvent_Finish = 4; // 会话结束
+  kTIMConvEvent_Start = 3;  // 开始接收会话事件
+  kTIMConvEvent_Finish = 4; // 完成接收会话事件
 
   {
   ****************************************

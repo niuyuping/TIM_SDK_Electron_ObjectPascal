@@ -14,7 +14,12 @@ uses
   YDRequestTypeUnit in 'yd_lib/YDRequestTypeUnit.pas',
   YDSMSTypeUnit in 'yd_lib/YDSMSTypeUnit.pas',
   YDLoginTypeUnit in 'yd_lib/YDLoginTypeUnit.pas',
-  ConstUnit in 'const/ConstUnit.pas';
+  ConstUnit in 'const/ConstUnit.pas',
+  YDUserTypeUnit in 'yd_lib/YDUserTypeUnit.pas',
+  YDProfileUnit in 'tim_lib/YDProfileUnit.pas',
+  YDAdapterUnit in 'yd_lib/YDAdapterUnit.pas',
+  YDUserUnit in 'yd_lib/YDUserUnit.pas',
+  YDAdapterTypeUnit in 'yd_lib/YDAdapterTypeUnit.pas';
 
 {$R *.res}
 
