@@ -27,6 +27,7 @@ type
     WebImageControl1: TWebImageControl;
     WebButton11: TWebButton;
     WebHTMLDiv1: TWebHTMLDiv;
+    WebButton3: TWebButton;
     [Async]procedure WebButton2Click(Sender: TObject);
     procedure WebButton4Click(Sender: TObject);
     procedure Form1Create(Sender: TObject);
@@ -36,6 +37,7 @@ type
     procedure LoginBtnClick(Sender: TObject);
     procedure WebButton11Click(Sender: TObject);
     procedure WebButton1Click(Sender: TObject);
+    procedure WebButton3Click(Sender: TObject);
   private
     { Private declarations }
     
@@ -44,6 +46,7 @@ type
     { Public declarations }
 
     [Async]procedure OnLogin(Sender: TObject);
+    procedure OnLogout(Sender: TObject);
 
     procedure OnConnected(Sender: TObject);
     procedure OnDisconnected(Sender: TObject);
@@ -68,7 +71,6 @@ type
     procedure OnMsgRevoke(AMsgLocatorArray: TTIMMsgLocatorArray);
 
     procedure OnUnreadMessageCountChanged(AUnreadMessageCount: NativeInt);
-    
   end;
 
 var
@@ -81,8 +83,14 @@ implementation
 uses
   TypInfo, YDSMSTypeUnit, YDLoginTypeUnit, ConstUnit, libelectron;
 
+procedure TMainForm.WebButton3Click(Sender: TObject);
+begin
+  YDAdapter.Logout;  
+end;
+
 procedure TMainForm.WebButton1Click(Sender: TObject);
 begin
+  //获取SDK的版本号
   DebugMemo.Lines.Add(YDAdapter.TIM.SDKVersion);  
 end;
 
@@ -149,6 +157,7 @@ begin
   YDAdapter.OnMsgReceipt:=OnMsgReceipt;
   YDAdapter.OnMsgRevoke:=OnMsgRevoke;
   YDAdapter.OnUnreadMessageCountChanged:=OnUnreadMessageCountChanged;
+  YDAdapter.OnLogout:=OnLogout;
 end;
 
 procedure TMainForm.WebButton4Click(Sender: TObject);
@@ -171,7 +180,7 @@ begin
   DebugMemo.Lines.Add('已登录');
 
   TmpConvInfoList:= await(TTIMConvInfoArray, YDAdapter.TIM.GetConvList);
-
+  console.log(YDAdapter.Me.Profile);
   console.log(TmpConvInfoList);
 end;
 
@@ -260,6 +269,11 @@ end;
 procedure TMainForm.OnUnreadMessageCountChanged(AUnreadMessageCount: NativeInt);
 begin
   DebugMemo.Lines.Add('未读消息数改变：'+AUnreadMessageCount.ToString);
+end;
+
+procedure TMainForm.OnLogout(Sender: TObject);
+begin
+  DebugMemo.Lines.Add('登出');
 end;
 
 initialization

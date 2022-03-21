@@ -19,7 +19,8 @@ uses
   YDProfileUnit in 'tim_lib/YDProfileUnit.pas',
   YDAdapterUnit in 'yd_lib/YDAdapterUnit.pas',
   YDUserUnit in 'yd_lib/YDUserUnit.pas',
-  YDAdapterTypeUnit in 'yd_lib/YDAdapterTypeUnit.pas';
+  YDAdapterTypeUnit in 'yd_lib/YDAdapterTypeUnit.pas',
+  YDUtilsUnit in 'yd_lib/YDUtilsUnit.pas';
 
 {$R *.res}
 

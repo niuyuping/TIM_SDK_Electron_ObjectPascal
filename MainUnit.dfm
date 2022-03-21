@@ -142,7 +142,7 @@ object MainForm: TMainForm
     Width = 145
   end
   object LoginBtn: TWebButton
-    Caption = 'YD Login'
+    Caption = 'Login'
     Color = clNone
     Default = False
     Font.Charset = ANSI_CHARSET
@@ -303,5 +303,23 @@ object MainForm: TMainForm
     Role = 'null'
     Top = 744
     Width = 232
+  end
+  object WebButton3: TWebButton
+    Caption = 'Logout'
+    Color = clNone
+    Default = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -11
+    Font.Name = 'Arial'
+    Font.Size = 8
+    Font.Style = []
+    Height = 25
+    Left = 122
+    OnClick = WebButton3Click
+    Role = 'button'
+    TabOrder = 0
+    Top = 113
+    Width = 100
   end
 end

@@ -187,6 +187,7 @@
     <DCCReference Include="yd_lib/YDAdapterUnit.pas"/>
     <DCCReference Include="yd_lib/YDUserUnit.pas"/>
     <DCCReference Include="yd_lib/YDAdapterTypeUnit.pas"/>
+    <DCCReference Include="yd_lib/YDUtilsUnit.pas"/>
     <None Include="TryTIMSDK.html"/>
     <None Include="package.json"/>
     <None Include="main.js"/>

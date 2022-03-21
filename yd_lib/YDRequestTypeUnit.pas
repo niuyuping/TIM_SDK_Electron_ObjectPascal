@@ -26,6 +26,9 @@ type
 
   //盈单登录的事件
   TYDOnLogin = procedure (AResult: TYDCommonResponse; AUserData: JSValue) of object;
+
+  //盈单登出事件
+  TYDOnLogout = procedure (AResult: TYDCommonResponse; AUserData: JSValue) of object;
   
 implementation
 

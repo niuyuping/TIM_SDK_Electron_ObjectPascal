@@ -31,6 +31,8 @@ type
 
     FOnNewMessage: TNewMessageEvent;
 
+    FOnLogout: TNotifyEvent;
+  
     procedure SetOnConnected(Value: TNotifyEvent);
     procedure SetOnDisconnected(Value: TNotifyEvent);
     procedure SetOnConnecting(Value: TNotifyEvent);
@@ -59,6 +61,10 @@ type
 
     [async]procedure OnTIMLogin(AResult: TTIMCommonResponse);
 
+    function GetXPMSClientJSON: string;
+    
+  protected
+    property XPMSClientJSON: string read GetXPMSClientJSON;
   public
     //TIM SDK的实例
     property TIM: TTIMRenderer read FTIM write FTIM;
@@ -114,7 +120,10 @@ type
 
     //成功登录事件
     property OnLogin: TNotifyEvent read FOnLogin write FOnLogin;
-    
+
+    //成功登出事件
+    property OnLogout: TNotifyEvent read FOnLogout write FOnLogout;
+
     //成功获取短信验证码事件
     property OnGetSMS: TYDOnSMS read FOnGetSMS write FOnGetSMS;
 
@@ -123,7 +132,10 @@ type
     
     //登录，包括盈单登录和TIM登录，全流程完成以后会触发OnLogin事件
     [async]procedure Login(ALoginType: String; APhoneNumber: string; ACaptcha: string; AUserData: JSValue = Nil);
- 
+
+    //登出
+    [async]procedure Logout;
+
     //申请短信验证码
     [async]procedure GetSMS(AKind: String; APhoneNumber: String; AUserData: JSValue = Nil);
   end;
@@ -131,7 +143,7 @@ type
 implementation
 
 uses 
-  sysutils, YDRequestorUnit, ConstUnit, YDLoginTypeUnit, js, web, IMCloudDefUnit;
+  sysutils, YDRequestorUnit, ConstUnit, YDLoginTypeUnit, js, web, IMCloudDefUnit, WEBLib.JSON;
 
 constructor TYDAdapter.Create(AOwner: TComponent);
 begin
@@ -305,4 +317,36 @@ begin
   FTIM.OnUnreadMessageCountChanged:=Value;
 end;
 
+procedure TYDAdapter.Logout;
+var
+  TmpRequestor: TYDRequestor;
+begin
+  TmpRequestor:=TYDRequestor.Create(Self);
+  try
+    await(FTIM.Logout);
+    await(TmpRequestor.RequestLogout(XPMSClientJSON, FMe.Profile.Token));
+  finally
+    if Assigned(FONLogout) then
+      FOnLogout(Self);
+    FreeAndNil(TmpRequestor);
+  end;
+end;
+
+function TYDAdapter.GetXPMSClientJSON: string;
+begin
+  Result:='';
+
+  with TJSONObject.Create do
+  begin
+    try
+      AddPair('deviceInfo', '');
+      AddPair('platform', 'MacOS');
+      AddPair('pushToken', FMe.Profile.Token);
+      Result:=ToString;
+    finally
+      Free;
+    end;
+  end;
+end;
+  
 end.
